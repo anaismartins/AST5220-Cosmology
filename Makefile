@@ -35,7 +35,7 @@ C = -O3 -g $(OPTIONS)
 
 SRC_DIR=src/
 BUILD_DIR=build/
-BIN_DIR=bin/	
+BIN_DIR=bin/
 TARGETS := $(BIN_DIR)cmb
 all: $(TARGETS)
 
@@ -56,12 +56,13 @@ Examples.o              : Utils.h Spline.h ODESolver.h
 examples: Examples.o Utils.o Spline.o ODESolver.o
 	${CC} -o $@ $^ $C $(INC) $(LIBS)
 
-cmb: $(OBJS)
+$(BIN_DIR)%: $(OBJS)
 	${CC} -o $@ $^ $C $(INC) $(LIBS)
 
 $(BUILD_DIR)%.o: $(SRC_DIR)%.cpp
 	${CC}  -c -o $@ $< $C $(INC) 
 
 clean:
-	rm -rf $(TARGETS) *.o $(BUILD_DIR)*.o $(BIN_DIR)*
+	rm -rf $(TARGETS) $(BUILD_DIR)*.o
 
+.PRECIOUS: $(BUILD_DIR)%.o
