@@ -10,18 +10,18 @@ class BackgroundCosmology
 {
 private:
   // Cosmological parameters
-  double h;           // Little h = H0/(100km/s/Mpc)
-  double OmegaB;      // Baryon density today
-  double OmegaCDM;    // CDM density today
-  double OmegaLambda; // Dark energy density today
-  double Neff;        // Effective number of relativistic species (3.046 or 0 if ignoring neutrinos)
-  double TCMB;        // Temperature of the CMB today in Kelvin
+  double h;         // Little h = H0/(100km/s/Mpc)
+  double OmegaB0;   // Baryon density today
+  double OmegaCDM0; // CDM density today
+  double OmegaK0;   // Curvature density = 1 - OmegaM - OmegaR - OmegaNu - OmegaLambda
+  double Neff;      // Effective number of relativistic species (3.046 or 0 if ignoring neutrinos)
+  double TCMB;      // Temperature of the CMB today in Kelvin
 
   // Derived parameters
-  double OmegaR;  // Photon density today (follows from TCMB)
-  double OmegaNu; // Neutrino density today (follows from TCMB and Neff)
-  double OmegaK;  // Curvature density = 1 - OmegaM - OmegaR - OmegaNu - OmegaLambda
-  double H0;      // The Hubble parameter today H0 = 100h km/s/Mpc
+  double H0;           // The Hubble parameter today H0 = 100h km/s/Mpc
+  double OmegaLambda0; // Dark energy density today
+  double OmegaGamma0;  // Photon density today (follows from TCMB)
+  double OmegaNu0;     // Neutrino density today (follows from TCMB and Neff)
 
   // Start and end of x-integration (can be changed)
   double x_start = Constants.x_start;
@@ -35,9 +35,9 @@ public:
   BackgroundCosmology() = delete;
   BackgroundCosmology(
       double h,
-      double OmegaB,
-      double OmegaCDM,
-      double OmegaK,
+      double OmegaB0,
+      double OmegaCDM0,
+      double OmegaK0,
       double Neff,
       double TCMB);
 
@@ -58,7 +58,7 @@ public:
   double ddHpddx_of_x(double x) const;
   double get_OmegaB(double x = 0.0) const;
   double get_OmegaM(double x = 0.0) const;
-  double get_OmegaR(double x = 0.0) const;
+  double get_OmegaGamma(double x = 0.0) const;
   double get_OmegaRtot(double x = 0.0) const;
   double get_OmegaNu(double x = 0.0) const;
   double get_OmegaCDM(double x = 0.0) const;

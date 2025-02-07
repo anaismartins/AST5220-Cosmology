@@ -8,29 +8,22 @@
 
 BackgroundCosmology::BackgroundCosmology(
     double h,
-    double OmegaB,
-    double OmegaCDM,
-    double OmegaK,
+    double OmegaB0,
+    double OmegaCDM0,
+    double OmegaK0,
     double Neff,
     double TCMB) : h(h),
-                   OmegaB(OmegaB),
-                   OmegaCDM(OmegaCDM),
-                   OmegaK(OmegaK),
+                   OmegaB0(OmegaB0),
+                   OmegaCDM0(OmegaCDM0),
+                   OmegaK0(OmegaK0),
                    Neff(Neff),
                    TCMB(TCMB)
 {
+  H0 = Constants.H0_over_h * h;
 
-  //=============================================================================
-  // TODO: Compute OmegaR, OmegaNu, OmegaLambda, H0, ...
-  //=============================================================================
-  double H0 = Constants.H0_over_h * h;
-
-  double OmegaNu = Neff * 7. / 8. * pow(4. / 11., 4. / 3.) * OmegaR;
-  double OmegaRtot = OmegaR + OmegaNu;
-
-  double OmegaLambda = 1. - OmegaB - OmegaK - OmegaCDM - OmegaRtot;
-
-  double getOmegaGamma
+  OmegaGamma0 = 2. * M_PI * M_PI / 30. * pow(Constants.k_b * TCMB, 4) / (pow(Constants.hbar, 3) * pow(Constants.c, 5)) * 8 * M_PI * Constants.G / (3 * H0 * H0);
+  OmegaNu0 = Neff * 7. / 8. * pow(4. / 11., 4. / 3.) * OmegaGamma0;
+  OmegaLambda0 = 1. - OmegaB0 - OmegaK0 - OmegaCDM0 - OmegaGamma0 - OmegaNu0;
 }
 
 //====================================================
@@ -80,12 +73,8 @@ void BackgroundCosmology::solve()
 
 double BackgroundCosmology::H_of_x(double x) const
 {
-
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  double a = exp(x); // TODO: Change this to a place where it computes it for all
-  double H = H0 * sqrt((OmegaB + OmegaCDM) * pow(a, -3) + (OmegaR + OmegaNu) * pow(a, -4) + OmegaK * pow(a, -2) + OmegaLambda);
+  double a = exp(x);
+  double H = H0 * sqrt((OmegaB0 + OmegaCDM0) * pow(a, -3) + (OmegaGamma0 + OmegaNu0) * pow(a, -4) + OmegaK0 * pow(a, -2) + OmegaLambda0);
 
   return H;
 }
@@ -129,87 +118,63 @@ double BackgroundCosmology::ddHpddx_of_x(double x) const
 double BackgroundCosmology::get_OmegaB(double x) const
 {
   if (x == 0.0)
-    return OmegaB;
+    return OmegaB0;
 
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
+  double a = exp(x);
+  double OmegaB = OmegaB0 / (pow(a, 3) * pow(H_of_x(x) / H0, 2));
 
-  return 0.0;
+  return OmegaB;
 }
 
-double BackgroundCosmology::get_OmegaR(double x) const
+double BackgroundCosmology::get_OmegaGamma(double x) const
 {
-
-  double OmegaR0 = 2. * M_PI * M_PI / 30. * pow(Constants.k_b * TCMB, 4) / (pow(Constants.hbar, 3) * pow(Constants.c, 5)) * 8 * M_PI * Constants.G / (3 * H0 * H0);
-  double a = exp(x);
   if (x == 0.0)
-    return OmegaR0;
+    return OmegaGamma0;
 
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
-  return OmegaR0 / (pow(a, 4) * pow(H_of_x(x) / H0, 2)); // TODO: this is wrong, it should be H(a), check if I should write that or other way to go about it
+  double a = exp(x);
+  double OmegaGamma = OmegaGamma0 / (pow(a, 4) * pow(H_of_x(x) / H0, 2));
+  return OmegaGamma;
 }
 
 double BackgroundCosmology::get_OmegaNu(double x) const
 {
+
   if (x == 0.0)
-    return OmegaNu;
+    return OmegaNu0;
 
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
-
-  return 0.0;
+  double a = exp(x);
+  double OmegaNu = OmegaNu0 / (pow(a, 4) * pow(H_of_x(x) / H0, 2));
+  return OmegaNu;
 }
 
 double BackgroundCosmology::get_OmegaCDM(double x) const
 {
   if (x == 0.0)
-    return OmegaCDM;
+    return OmegaCDM0;
 
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
-
-  return 0.0;
+  double a = exp(x);
+  double OmegaCDM = OmegaCDM0 / (pow(a, 3) * pow(H_of_x(x) / H0, 2));
+  return OmegaCDM;
 }
 
 double BackgroundCosmology::get_OmegaLambda(double x) const
 {
   if (x == 0.0)
-    return OmegaLambda;
+    return OmegaLambda0;
 
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
-
-  return 0.0;
+  double a = exp(x);
+  double OmegaLambda = OmegaLambda0 / (pow(H_of_x(x) / H0, 2));
+  return OmegaLambda;
 }
 
 double BackgroundCosmology::get_OmegaK(double x) const
 {
   if (x == 0.0)
-    return OmegaK;
+    return OmegaK0;
 
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
-
-  return 0.0;
+  double a = exp(x);
+  double OmegaK = OmegaK0 / (pow(a, 2) * pow(H_of_x(x) / H0, 2));
+  return OmegaK;
 }
 
 double BackgroundCosmology::get_luminosity_distance_of_x(double x) const
@@ -267,15 +232,15 @@ void BackgroundCosmology::info() const
 {
   std::cout << "\n";
   std::cout << "Info about cosmology class:\n";
-  std::cout << "OmegaB:      " << OmegaB << "\n";
-  std::cout << "OmegaCDM:    " << OmegaCDM << "\n";
-  std::cout << "OmegaLambda: " << OmegaLambda << "\n";
-  std::cout << "OmegaK:      " << OmegaK << "\n";
-  std::cout << "OmegaNu:     " << OmegaNu << "\n";
-  std::cout << "OmegaR:      " << OmegaR << "\n";
-  std::cout << "Neff:        " << Neff << "\n";
-  std::cout << "h:           " << h << "\n";
-  std::cout << "TCMB:        " << TCMB << "\n";
+  std::cout << "OmegaB0:      " << OmegaB0 << "\n";
+  std::cout << "OmegaCDM0:    " << OmegaCDM0 << "\n";
+  std::cout << "OmegaLambda0: " << OmegaLambda0 << "\n";
+  std::cout << "OmegaK0:      " << OmegaK0 << "\n";
+  std::cout << "OmegaNu0:     " << OmegaNu0 << "\n";
+  std::cout << "OmegaGamma0:  " << OmegaGamma0 << "\n";
+  std::cout << "Neff:         " << Neff << "\n";
+  std::cout << "h:            " << h << "\n";
+  std::cout << "TCMB:         " << TCMB << "\n";
   std::cout << std::endl;
 }
 
@@ -300,7 +265,7 @@ void BackgroundCosmology::output(const std::string filename) const
     fp << get_OmegaB(x) << " ";
     fp << get_OmegaCDM(x) << " ";
     fp << get_OmegaLambda(x) << " ";
-    fp << get_OmegaR(x) << " ";
+    fp << get_OmegaGamma(x) << " ";
     fp << get_OmegaNu(x) << " ";
     fp << get_OmegaK(x) << " ";
     fp << "\n";
