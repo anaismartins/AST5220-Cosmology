@@ -29,6 +29,7 @@ private:
 
   // Splines to be made
   Spline eta_of_x_spline{"eta"};
+  Spline cosmic_time_spline{"cosmic time"};
 
 public:
   // Constructors
@@ -73,6 +74,8 @@ public:
   // Distance measures
   double get_luminosity_distance_of_x(double x) const;
   double get_comoving_distance_of_x(double x) const;
+  double get_cosmic_time(double x) const;
+  double get_z(double x) const;
 };
 
 #endif

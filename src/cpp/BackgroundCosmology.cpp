@@ -33,44 +33,27 @@ BackgroundCosmology::BackgroundCosmology(
 // Solve the background
 void BackgroundCosmology::solve()
 {
-  Utils::StartTiming("Eta");
 
-  //=============================================================================
-  // TODO: Set the range of x and the number of points for the splines
-  // For this Utils::linspace(x_start, x_end, npts) is useful
-  //=============================================================================
   Vector x_array;
   int npts = 1000;
 
   x_array = Utils::linspace(x_start, x_end, npts);
 
+  ODESolver ode;
+
+  Utils::StartTiming("Eta");
+
   // The ODE for deta/dx
   ODEFunction detadx = [&](double x, const double *eta, double *detadx)
   {
-    //=============================================================================
-    // TODO: Set the rhs of the detadx ODE
-    //=============================================================================
-    //...
-    //...
-
     detadx[0] = Constants.c / Hp_of_x(x);
 
     return GSL_SUCCESS;
   };
 
-  //=============================================================================
-  // TODO: Set the initial condition, set up the ODE system, solve and make
-  // the spline eta_of_x_spline
-  //=============================================================================
-  // ...
-  // ...
-  // ...
-  // ...
-
   double etaini = 0.0;
   Vector eta_ic{etaini};
 
-  ODESolver ode;
   ode.solve(detadx, x_array, eta_ic);
 
   auto eta_array = ode.get_data_by_component(0);
@@ -78,6 +61,27 @@ void BackgroundCosmology::solve()
   eta_of_x_spline.create(x_array, eta_array, "eta");
 
   Utils::EndTiming("Eta");
+
+  Utils::StartTiming("CosmicTime");
+
+  // The ODE for dt/dx
+  ODEFunction dtdx = [&](double x, const double *t, double *dtdx)
+  {
+    dtdx[0] = 1. / Hp_of_x(x);
+
+    return GSL_SUCCESS;
+  };
+
+  double tini = 1. / (2 * Hp_of_x(x_start));
+  Vector t_ic{tini};
+
+  ode.solve(dtdx, x_array, t_ic);
+
+  auto t_array = ode.get_data_by_component(0);
+
+  cosmic_time_spline.create(x_array, t_array, "cosmic time");
+
+  Utils::EndTiming("CosmicTime");
 }
 
 //====================================================
@@ -222,12 +226,6 @@ double BackgroundCosmology::get_luminosity_distance_of_x(double x) const
 }
 double BackgroundCosmology::get_comoving_distance_of_x(double x) const
 {
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
-
   double eta0 = eta_of_x(0.0);
   double etax = eta_of_x(x);
 
@@ -237,6 +235,16 @@ double BackgroundCosmology::get_comoving_distance_of_x(double x) const
 double BackgroundCosmology::eta_of_x(double x) const
 {
   return eta_of_x_spline(x);
+}
+
+double BackgroundCosmology::get_cosmic_time(double x) const
+{
+  return cosmic_time_spline(x);
+}
+
+double BackgroundCosmology::get_z(double x) const
+{
+  return exp(x_end) / exp(x) - 1;
 }
 
 double BackgroundCosmology::get_H0() const
@@ -305,6 +313,9 @@ void BackgroundCosmology::output(const std::string filename) const
     fp << get_OmegaGamma(x) << " ";
     fp << get_OmegaNu(x) << " ";
     fp << get_OmegaK(x) << " ";
+    fp << get_cosmic_time(x) << " ";
+    fp << get_z(x) << " ";
+    fp << get_luminosity_distance_of_x(x) << " ";
     fp << "\n";
   };
   std::for_each(x_array.begin(), x_array.end(), print_data);
