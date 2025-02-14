@@ -40,6 +40,9 @@ void BackgroundCosmology::solve()
   // For this Utils::linspace(x_start, x_end, npts) is useful
   //=============================================================================
   Vector x_array;
+  int npts = 1000;
+
+  x_array = Utils::linspace(x_start, x_end, npts);
 
   // The ODE for deta/dx
   ODEFunction detadx = [&](double x, const double *eta, double *detadx)
@@ -50,7 +53,7 @@ void BackgroundCosmology::solve()
     //...
     //...
 
-    detadx[0] = 0.0;
+    detadx[0] = Constants.c / Hp_of_x(x);
 
     return GSL_SUCCESS;
   };
@@ -63,6 +66,16 @@ void BackgroundCosmology::solve()
   // ...
   // ...
   // ...
+
+  double etaini = 0.0;
+  Vector eta_ic{etaini};
+
+  ODESolver ode;
+  ode.solve(detadx, x_array, eta_ic);
+
+  auto eta_array = ode.get_data_by_component(0);
+
+  eta_of_x_spline.create(x_array, eta_array, "eta");
 
   Utils::EndTiming("Eta");
 }
@@ -82,37 +95,37 @@ double BackgroundCosmology::H_of_x(double x) const
 double BackgroundCosmology::Hp_of_x(double x) const
 {
 
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
+  double a = exp(x);
+  double H = H_of_x(x);
 
-  return 0.0;
+  return H * a;
 }
 
 double BackgroundCosmology::dHpdx_of_x(double x) const
 {
+  double a = exp(x);
+  double OmegaM0 = OmegaB0 + OmegaCDM0;
+  double OmegaR0 = OmegaGamma0 + OmegaNu0;
 
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
+  double Hp = Hp_of_x(x);
 
-  return 0.0;
+  double dHpdx = Hp + 1. / 2. * (a * H0) * (a * H0) / Hp * (-3 * OmegaM0 * pow(a, -3) - 4 * OmegaR0 * pow(a, -4) - 2 * OmegaK0 * pow(a, -2));
+
+  return dHpdx;
 }
 
 double BackgroundCosmology::ddHpddx_of_x(double x) const
 {
+  double a = exp(x);
+  double OmegaM0 = OmegaB0 + OmegaCDM0;
+  double OmegaR0 = OmegaGamma0 + OmegaNu0;
 
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
+  double Hp = Hp_of_x(x);
+  double dHpdx = dHpdx_of_x(x);
 
-  return 0.0;
+  double ddHpddx = dHpdx * (1 - 1. / 4. * pow((a * H0) / Hp, 5) * pow((3 * OmegaM0 * pow(a, -3) + 4 * OmegaR0 * pow(a, -4) + 2 * OmegaK0 * pow(a, -2)), 2) * (9 * OmegaM0 * pow(a, -3) + 16 * OmegaR0 * pow(a, -4) + 4 * OmegaK0 * pow(a, -2)));
+
+  return ddHpddx;
 }
 
 double BackgroundCosmology::get_OmegaB(double x) const
@@ -185,7 +198,27 @@ double BackgroundCosmology::get_luminosity_distance_of_x(double x) const
   //...
   //...
 
-  return 0.0;
+  double a = exp(x);
+
+  double chi = get_comoving_distance_of_x(x);
+  double term = sqrt(abs(OmegaK0) * H0 * chi / Constants.c);
+
+  double r;
+
+  if (OmegaK0 == 0)
+  {
+    r = chi;
+  }
+  else if (OmegaK0 > 0)
+  {
+    r = chi * sinh(term) / term;
+  }
+  else
+  {
+    r = chi * sin(term) / term;
+  }
+
+  return r / a;
 }
 double BackgroundCosmology::get_comoving_distance_of_x(double x) const
 {
@@ -195,7 +228,10 @@ double BackgroundCosmology::get_comoving_distance_of_x(double x) const
   //...
   //...
 
-  return 0.0;
+  double eta0 = eta_of_x(0.0);
+  double etax = eta_of_x(x);
+
+  return eta0 - etax;
 }
 
 double BackgroundCosmology::eta_of_x(double x) const
@@ -262,6 +298,7 @@ void BackgroundCosmology::output(const std::string filename) const
     fp << eta_of_x(x) << " ";
     fp << Hp_of_x(x) << " ";
     fp << dHpdx_of_x(x) << " ";
+    fp << ddHpddx_of_x(x) << " ";
     fp << get_OmegaB(x) << " ";
     fp << get_OmegaCDM(x) << " ";
     fp << get_OmegaLambda(x) << " ";

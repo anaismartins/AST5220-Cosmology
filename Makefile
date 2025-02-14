@@ -21,7 +21,7 @@ OPTIONS += -D_GLIBCXX_DEBUG
 OPTIONS += -D_SPLINE_WARNINGS_ON
 
 # Show info about the solution as we integrate
-OPTIONS += -D_FIDUCIAL_VERBOSE_ODE_SOLVER_TRUE
+#OPTIONS += -D_FIDUCIAL_VERBOSE_ODE_SOLVER_TRUE
 
 # Add OpenMP parallelization
 OPTIONS += -D_USEOPEMP
@@ -33,7 +33,7 @@ C = -O3 -g $(OPTIONS)
 
 #=======================================================
 
-SRC_DIR=src/
+SRC_DIR=src/cpp/
 BUILD_DIR=build/
 BIN_DIR=bin/
 TARGETS := $(BIN_DIR)cmb
