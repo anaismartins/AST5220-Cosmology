@@ -5,7 +5,6 @@
 #include "Utils.h"
 
 using Vector = std::vector<double>;
-
 class BackgroundCosmology
 {
 private:
@@ -58,14 +57,11 @@ public:
   double dHpdx_of_x(double x) const;
   double ddHpddx_of_x(double x) const;
   double get_OmegaB(double x = 0.0) const;
-  double get_OmegaM(double x = 0.0) const;
   double get_OmegaGamma(double x = 0.0) const;
-  double get_OmegaRtot(double x = 0.0) const;
   double get_OmegaNu(double x = 0.0) const;
   double get_OmegaCDM(double x = 0.0) const;
   double get_OmegaLambda(double x = 0.0) const;
   double get_OmegaK(double x = 0.0) const;
-  double get_OmegaMnu(double x = 0.0) const;
   double get_H0() const;
   double get_h() const;
   double get_Neff() const;
@@ -77,5 +73,14 @@ public:
   double get_cosmic_time(double x) const;
   double get_z(double x) const;
 };
+
+extern "C"
+{
+  BackgroundCosmology *BackgroundCosmology_new(double h, double OmegaB0, double OmegaCDM0, double OmegaK0, double Neff, double TCMB);
+  void BackgroundCosmology_solve(BackgroundCosmology *bc);
+  double BackgroundCosmology_get_cosmic_time(BackgroundCosmology *bc, double x);
+  double BackgroundCosmology_get_OmegaGamma(BackgroundCosmology *bc, double x);
+  double BackgroundCosmology_get_OmegaNu(BackgroundCosmology *bc, double x);
+}
 
 #endif

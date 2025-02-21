@@ -5,7 +5,6 @@
 //====================================================
 // Constructors
 //====================================================
-
 BackgroundCosmology::BackgroundCosmology(
     double h,
     double OmegaB0,
@@ -67,12 +66,12 @@ void BackgroundCosmology::solve()
   // The ODE for dt/dx
   ODEFunction dtdx = [&](double x, const double *t, double *dtdx)
   {
-    dtdx[0] = 1. / Hp_of_x(x);
+    dtdx[0] = 1. / H_of_x(x);
 
     return GSL_SUCCESS;
   };
 
-  double tini = 1. / (2 * Hp_of_x(x_start));
+  double tini = 1. / (2 * H_of_x(x_start));
   Vector t_ic{tini};
 
   ode.solve(dtdx, x_array, t_ic);
@@ -196,12 +195,6 @@ double BackgroundCosmology::get_OmegaK(double x) const
 
 double BackgroundCosmology::get_luminosity_distance_of_x(double x) const
 {
-  //=============================================================================
-  // TODO: Implement...
-  //=============================================================================
-  //...
-  //...
-
   double a = exp(x);
 
   double chi = get_comoving_distance_of_x(x);
@@ -224,6 +217,7 @@ double BackgroundCosmology::get_luminosity_distance_of_x(double x) const
 
   return r / a;
 }
+
 double BackgroundCosmology::get_comoving_distance_of_x(double x) const
 {
   double eta0 = eta_of_x(0.0);
@@ -239,7 +233,7 @@ double BackgroundCosmology::eta_of_x(double x) const
 
 double BackgroundCosmology::get_cosmic_time(double x) const
 {
-  return cosmic_time_spline(x);
+  return cosmic_time_spline(x); // seconds
 }
 
 double BackgroundCosmology::get_z(double x) const
@@ -319,4 +313,32 @@ void BackgroundCosmology::output(const std::string filename) const
     fp << "\n";
   };
   std::for_each(x_array.begin(), x_array.end(), print_data);
+}
+
+extern "C"
+{
+  BackgroundCosmology *BackgroundCosmology_new(double h, double OmegaB0, double OmegaCDM0, double OmegaK0, double Neff, double TCMB)
+  {
+    return new BackgroundCosmology(h, OmegaB0, OmegaCDM0, OmegaK0, Neff, TCMB);
+  }
+
+  void BackgroundCosmology_solve(BackgroundCosmology *bc)
+  {
+    bc->solve();
+  }
+
+  double BackgroundCosmology_get_cosmic_time(BackgroundCosmology *bc, double x)
+  {
+    return bc->get_cosmic_time(x);
+  }
+
+  double BackgroundCosmology_get_OmegaGamma(BackgroundCosmology *bc, double x)
+  {
+    return bc->get_OmegaGamma(x);
+  }
+
+  double BackgroundCosmology_get_OmegaNu(BackgroundCosmology *bc, double x)
+  {
+    return bc->get_OmegaNu(x);
+  }
 }

@@ -9,7 +9,7 @@
 #include <gsl/gsl_odeiv2.h>
 
 //===================================================
-// 
+//
 // This is a wrapper around the GSL library to easily
 // solve ODEs and return the data in whatever format
 // you want.
@@ -17,7 +17,7 @@
 // Supplying an x-array the solution will be stored at
 // each of the points in the array (must be monotonic)
 //
-// Example use: 
+// Example use:
 // Solve the system dy0/dx=y1, dy1/dx=-y0 with
 // y0 = 2.0 and y1 = -2.0 on the interval [0,1]
 // and store the solution at x = 0.0, 0.25, 0.5 and 1.0
@@ -52,59 +52,57 @@
 // The fiducial stepper if not provided by the user
 #define _FIDUCIAL_STEPPER gsl_odeiv2_step_rk4
 
-using ODEFunctionPointer         = int (*)(double, const double[], double [], void*);
-using ODEFunctionPointerJacobian = int (*)(double, const double[], double [], double[], void*);
-using ODEFunction                = std::function<int(double, const double *, double *)>;
-using ODEFunctionJacobian        = std::function<int(double, const double *, double *, double *)>;
-using Vector                     = std::vector<double>;
-using Vector2D                   = std::vector<Vector>;
+using ODEFunctionPointer = int (*)(double, const double[], double[], void *);
+using ODEFunctionPointerJacobian = int (*)(double, const double[], double[], double[], void *);
+using ODEFunction = std::function<int(double, const double *, double *)>;
+using ODEFunctionJacobian = std::function<int(double, const double *, double *, double *)>;
+using Vector = std::vector<double>;
+using Vector2D = std::vector<Vector>;
 
 extern ODEFunctionJacobian *no_jacobian_ptr;
 
-class ODESolver{
-  private:
-
-    const gsl_odeiv2_step_type * stepper = _FIDUCIAL_STEPPER;
+class ODESolver
+{
+private:
+    const gsl_odeiv2_step_type *stepper = _FIDUCIAL_STEPPER;
 
     // Fiducial accuracy parameters
-    double hstart    = 1e-3;
-    double abserr    = 1e-7;
-    double relerr    = 1e-7;
+    double hstart = 1e-3;
+    double abserr = 1e-7;
+    double relerr = 1e-7;
 
     // Show information about the solution as we integrate
 #ifdef _FIDUCIAL_VERBOSE_ODE_SOLVER_TRUE
-    bool verbose     = true;
+    bool verbose = true;
 #else
-    bool verbose     = false;
+    bool verbose = false;
 #endif
 
-    int nequations   = 1;
+    int nequations = 1;
     int num_x_points = 0;
 
-    std::vector< Vector > data;
-    std::vector< Vector > derivative_data;
+    std::vector<Vector> data;
+    std::vector<Vector> derivative_data;
 
-  public:
-
+public:
     ODESolver() = default;
     ODESolver(double hstart, double abserr, double relerr);
-    ODESolver(const ODESolver & rhs) = delete;
-    ODESolver& operator=(const ODESolver & rhs) = delete;
+    ODESolver(const ODESolver &rhs) = delete;
+    ODESolver &operator=(const ODESolver &rhs) = delete;
 
     void solve(
-        ODEFunctionPointer ode_equation, 
-        void *parameters, 
-        Vector& xarr, 
-        Vector& yinitial, 
-        const gsl_odeiv2_step_type * stepper = _FIDUCIAL_STEPPER,
+        ODEFunctionPointer ode_equation,
+        void *parameters,
+        Vector &xarr,
+        Vector &yinitial,
+        const gsl_odeiv2_step_type *stepper = _FIDUCIAL_STEPPER,
         ODEFunctionPointerJacobian jacobian = nullptr);
     void solve(
-        ODEFunction & ode_equation, 
-        Vector& xarr, 
-        Vector& yinitial, 
-        const gsl_odeiv2_step_type * stepper = _FIDUCIAL_STEPPER,
-        ODEFunctionJacobian & jacobian = *no_jacobian_ptr
-        );
+        ODEFunction &ode_equation,
+        Vector &xarr,
+        Vector &yinitial,
+        const gsl_odeiv2_step_type *stepper = _FIDUCIAL_STEPPER,
+        ODEFunctionJacobian &jacobian = *no_jacobian_ptr);
 
     void set_verbose(bool onoff);
     void set_accuracy(const double hstart, const double abserr, const double relerr);

@@ -60,9 +60,12 @@ $(BIN_DIR)%: $(OBJS)
 	${CC} -o $@ $^ $C $(INC) $(LIBS)
 
 $(BUILD_DIR)%.o: $(SRC_DIR)%.cpp
-	${CC}  -c -o $@ $< $C $(INC) 
+	${CC} -c -o $@ $< $C $(INC) 
 
 clean:
 	rm -rf $(TARGETS) $(BUILD_DIR)*.o
+
+python-lib: $(OBJS)
+	${CC} -shared -fPIC -o $(BIN_DIR)libcmb.so $(SRC_DIR)BackgroundCosmology.cpp $(SRC_DIR)ODESolver.cpp $(SRC_DIR)Utils.cpp $(SRC_DIR)Spline.cpp $(LIBS)
 
 .PRECIOUS: $(BUILD_DIR)%.o
