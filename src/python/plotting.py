@@ -54,10 +54,21 @@ plt.savefig(
 )
 plt.clf()
 
+x_acceleration = -0.4794171164592207
+
 plt.plot(x, Hp / H0_over_h)
+plt.vlines(
+    x_acceleration,
+    min(Hp / H0_over_h),
+    max(Hp / H0_over_h),
+    label="Universe starts to accelerate",
+    color="black",
+    linestyle="--",
+)
 plt.yscale("log")
 plt.xlabel(r"$x$")
 plt.ylabel(r"$\mathcal{H} \left(\frac{100 km/s}{Mpc}\right)$")
+plt.legend()
 plt.savefig(
     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Hp.pdf"
 )
@@ -150,3 +161,36 @@ plt.savefig(
     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/histogram.pdf"
 )
 plt.clf()
+
+# eras plot
+x_start = np.log(1e-8)
+x_end = 0
+
+x_radiation_matter = -8.131921542438867
+x_matter_lambda = -0.25581887374692047
+
+plt.plot(x, OmegaB + OmegaCDM, label=r"$\Omega_M$")
+plt.plot(x, OmegaGamma + OmegaNu, label=r"$\Omega_R$")
+plt.plot(x, OmegaLambda, label=r"$\Omega_\Lambda$")
+plt.vlines(
+    x_radiation_matter,
+    0,
+    1,
+    label="Radiation-matter equality",
+    color="black",
+    linestyle="--",
+)
+plt.vlines(
+    x_matter_lambda,
+    0,
+    1,
+    label="Matter-dark energy equality",
+    color="black",
+    linestyles="-.",
+)
+plt.xlabel(r"$x$")
+plt.ylabel(r"$\Omega_i$")
+plt.legend()
+plt.savefig(
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Omegas.pdf"
+)

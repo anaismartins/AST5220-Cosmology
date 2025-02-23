@@ -341,4 +341,19 @@ extern "C"
   {
     return bc->get_OmegaNu(x);
   }
+
+  double BackgroundCosmology_get_H_of_x(BackgroundCosmology *bc, double x)
+  {
+    return bc->H_of_x(x);
+  }
+
+  double BackgroundCosmology_get_dHpdx_of_x(BackgroundCosmology *bc, double x)
+  {
+    return bc->dHpdx_of_x(x);
+  }
+
+  double BackgroundCosmology_eta_of_x(BackgroundCosmology *bc, double x)
+  {
+    return bc->eta_of_x(x);
+  }
 }

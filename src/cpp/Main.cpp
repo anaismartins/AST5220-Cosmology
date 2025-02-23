@@ -45,9 +45,6 @@ int main(int argc, char **argv)
   // Make sure you read the comments on the top of src/SupernovaFitting.h
   mcmc_fit_to_supernova_data("data/supernovadata.txt", "output/data/results_supernovafitting.txt");
 
-  // Print the cosmic time for x = -8.657694814439557
-  std::cout << "Cosmic time at x = -8.657694814439557: " << cosmo.get_cosmic_time(-8.657694814439557) << " seconds" << std::endl;
-
   // Remove when module is completed
   return 0;
 

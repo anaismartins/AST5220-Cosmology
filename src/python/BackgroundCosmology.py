@@ -29,6 +29,15 @@ class BackgroundCosmology(object):
         lib.BackgroundCosmology_get_OmegaNu.argtypes = [c_void_p, c_double]
         lib.BackgroundCosmology_get_OmegaNu.restype = c_double
 
+        lib.BackgroundCosmology_get_H_of_x.argtypes = [c_void_p, c_double]
+        lib.BackgroundCosmology_get_H_of_x.restype = c_double
+
+        lib.BackgroundCosmology_get_dHpdx_of_x.argtypes = [c_void_p, c_double]
+        lib.BackgroundCosmology_get_dHpdx_of_x.restype = c_double
+
+        lib.BackgroundCosmology_eta_of_x.argtypes = [c_void_p, c_double]
+        lib.BackgroundCosmology_eta_of_x.restype = c_double
+
         self.obj = lib.BackgroundCosmology_new(
             h, OmegaB0, OmegaCDM0, OmegaK0, Neff, TCMB
         )
@@ -44,3 +53,12 @@ class BackgroundCosmology(object):
 
     def get_OmegaNu(self, x):
         return lib.BackgroundCosmology_get_OmegaNu(self.obj, x)
+
+    def get_H_of_x(self, x):
+        return lib.BackgroundCosmology_get_H_of_x(self.obj, x)
+
+    def get_dHpdx_of_x(self, x):
+        return lib.BackgroundCosmology_get_dHpdx_of_x(self.obj, x)
+
+    def eta_of_x(self, x):
+        return lib.BackgroundCosmology_eta_of_x(self.obj, x)

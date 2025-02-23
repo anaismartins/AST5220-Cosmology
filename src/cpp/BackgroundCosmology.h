@@ -81,6 +81,9 @@ extern "C"
   double BackgroundCosmology_get_cosmic_time(BackgroundCosmology *bc, double x);
   double BackgroundCosmology_get_OmegaGamma(BackgroundCosmology *bc, double x);
   double BackgroundCosmology_get_OmegaNu(BackgroundCosmology *bc, double x);
+  double BackgroundCosmology_get_H_of_x(BackgroundCosmology *bc, double x);
+  double BackgroundCosmology_get_dHpdx_of_x(BackgroundCosmology *bc, double x);
+  double BackgroundCosmology_eta_of_x(BackgroundCosmology *bc, double x);
 }
 
 #endif
