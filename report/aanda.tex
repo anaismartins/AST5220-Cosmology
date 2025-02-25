@@ -103,8 +103,44 @@ We can get the component densities for different scale factors from
 \end{aligned}
 \end{equation}
 
+It is handy to explore the Hubble parameter equations before introducing some new notions. In particular, a useful quantity is the scaled Hubble parameter $\mathcal H = aH$. Deriving this with respect to $x = \log a$ and denoting the derivative with respect to $x$ as ', we have
+\begin{align}
+    \mathcal H' &= \frac{d\mathcal H}{dx} = \frac{da}{dx}\frac{d\mathcal H}{da}\\ 
+    &= a\left( H(a) + \frac{1}{2}\frac{aH_0^2}{ H(a)} (-3\Omega_{M0} a^{-4} - 4\Omega_{R0}a^{-5}-2\Omega_{k0}a^{-3})\right)\\
+    &= \mathcal H(x) +\frac{1}{2}\frac{(e^xH_0)^2}{\mathcal H(x)}(-3\Omega_{M0} e^{-3x} - 4 \Omega_{R0}e^{-4x}-2\Omega_{k0}e^{-2x}).
+\end{align}
 
-We are interested in looking at specific points in time, such as the points when matter and radiation had the same density and when matter and dark energy had the same density (and subsequent dominating periods), and the time when the Universe started to accelerate.
+Deriving once more, we get
+\begin{alignat*}{2}
+    \mathcal H'' &= \frac{d^2\mathcal H}{dx^2}&&\\ 
+    &= \mathcal H'\Bigg(1-&&\frac{1}{4}\left(\frac{e^xH_0}{\mathcal H(x)}\right)^5\\
+    & &&(3\Omega_{M0}e^{-3x}+4\Omega_{R0}e^{-4x}+2\Omega_{k0}e^{-2x})^2\\
+    & &&(9\Omega_{M0}e^{-3x}+16\Omega_{R0}e^{-4x}+4\Omega_{k0}e^{-2x})\Bigg)
+\end{alignat*}
+
+It is now useful to define the notion of conformal time $\eta$, the distance the light has traveled since the Big Bang, taking into account the expansion of the Universe. A differential equation for $\eta$ can be written as
+\begin{align}
+\frac{d\eta}{dx} = \frac{da}{dx}\frac{d\eta}{da} = \frac{c}{\mathcal{H}}.
+\end{align}
+
+From this, follow the definition of the co-moving distance $\chi$, the distance between the observer and a measurable quantity:
+\begin{align}
+\chi = \eta_0 - \eta
+\end{align}
+
+For a flat Universe, we can define the luminosity distance, i.e. given the intrinsic luminosity of a source and its flux, the distance to the source is
+
+\begin{equation}
+    d_L = \frac{\chi}{a}.
+\end{equation}
+
+A last useful notion before we get into some deductions is that of cosmic time $t$, which is given by solving
+\begin{align}
+\label{eq:t-ode}
+\frac{dt}{dx} = \frac{1}{H}.
+\end{align}
+
+We are now interested in looking at specific points in time, such as the points when matter and radiation had the same density and when matter and dark energy had the same density (and subsequent dominating periods), and the time when the Universe started to accelerate.
 
 \subsubsection{Matter-Radiation Equality}
 
@@ -112,26 +148,82 @@ We can find the time of matter-radiation equality by equating $
 \Omega_b + \Omega_{\rm CDM} = \Omega_\gamma + \Omega_{\nu}$. Using \eqref{eq:omegas}, we find that
 
 \begin{equation}
-    a\Omega_M = \Omega_R.
+    a = \frac{\Omega_R}{\Omega_M}.
 \end{equation}
 
 \subsubsection{Matter-Radiation Equality}
 
-\subsubsection{Other useful notions}
+Similarly, we find the time when matter and radiation are equally dense by equating $\Omega_b + \Omega_{\rm CDM} = \Omega_{\Lambda}$ and find that
 
-It is then useful to define the notion of conformal time $\eta$, the distance the light has traveled since the Big Bang, taking into account the expansion of the Universe. A differential equation for $\eta$ can be written as
-\begin{align}
-\frac{d\eta}{dx} = \frac{da}{dx}\frac{d\eta}{da} = \frac{c}{\mathcal{H}}.
-\end{align}
+\begin{equation}
+    a = \sqrt[3]{\frac{\Omega_M}{\Omega_{\Lambda}}}
+\end{equation}
 
+\subsubsection{The Universe starts to accelerate}
+
+In order to know when the Universe starts to accelerate, we must solve $\ddot a = 0$. By definition, $H = \dot{a}/a \Rightarrow \frac{d}{dt} \dot a = \frac{d}{dt} (aH) = \frac{d}{dt}\mathcal H$. It is not so useful to take the derivative in terms of cosmic time of the scaled Hubble parameter, but we already know what its derivative is in terms of $x$, so we can take that and get
+\begin{equation}
+    \ddot a = \frac{dx}{dt}\frac{d\mathcal H}{dx},
+\end{equation}
+where we know a handy expression for $\frac{dx}{dt}$ from \eqref{eq:t-ode} and we end up with
+\begin{equation}
+    \ddot a = H\mathcal{H'} = 0,
+\end{equation}
+where ' denotes the derivative in terms of $x$.
 
 \section{Implementation, numerical methods and tests}
 
 \subsection{Background Cosmology}
 
+We now want to use the previously presented equations in order to compute the relevant quantities over different scale factors. The code to reproduce this simulation is available at \url{https://github.com/anaismartins/AST5220-Cosmology}. For more readable but still fast calculations, these were written in Python (\texttt{src\\python}) with equations ported from C++ (\texttt{src\\cpp}) using \texttt{ctypes} \cite{ctypes}.
+
+\subsubsection{Solving ODEs}
+
+In particular, we have two important quantities defined by ordinary differential equations (ODEs), the conformal time $\eta$ and the cosmic time $t$. In order to solve them, we use a fourth order Runge-Kutta method, followed by splining the results over a relevant range, which, in our case, was chosen to be from $x=\log(10^{-8})$ until today ($x=0$).
+
+\subsubsection{Markov Chain Monte Carlo Sampling}
+
+We are interested in finding the value of the Hubble constant $H_0$, as well as the densities of the components of the Universe. To do this, we run a Markov chain Monte Carlo method, sampling $h = \frac{H_0}{100\text{ km s}^{-1}\text{ Mpc}^{-1}}$ (the dimensionless Hubble constant), $\Omega_M$ and $\Omega_k$ from data from supernova type IA observations \citep{Betoule_2014}.
+
 \section{Results}
 
 \subsection{Background Cosmology}
+
+According to our simulations, the densities of the different components of the Universe evolve as shown in Figure \ref{fig:Omegas}. This results in the scaled Hubble parameter shown in Figure \ref{fig:Hp}. The vertical lines in each of these figures represent relevant points in time, and the values for each of these are shown in Table \ref{table:times}. The analytical calculations that give the values in the table seem to agree with the curves derived from simulations in the figures, demonstrating trustworthy results.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\hsize]{figures/Omegas.pdf}
+  \caption{Evolution of the densities of the components of the Universe as a function of the logarithm of the scale factor, where the density of matter, radiation and dark energy are shown, respectively, in blue, orange and green. The black vertical lines show the radiation-matter (dashed) and matter-dark energy (dot-dashed) equalities. In the beginning, radiation dominates; in between the two vertical lines, matter dominates; and, closer to today, dark energy dominates.}
+     \label{fig:Omegas}
+\end{figure}
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\hsize]{figures/Hp.pdf}
+  \caption{Scaled Hubble parameter as a function of the logarithm of the scale factor (blue). The black vertical dashed line represents the point where the Universe starts to accelerate.}
+     \label{fig:Hp}
+\end{figure}
+
+\begin{table*}[ht]
+\caption{Nonlinear Model Results}             
+\label{table:times}      
+\centering          
+\begin{tabular}{l l l l}     % 7 columns 
+\hline\hline       
+                      % To combine 4 columns into a single one 
+& Logarithm of scale factor $x$      & Redshift $z$     & Cosmic time $t$ (Gyr)\\ 
+\hline                    
+Radiation-Matter Equality   & -8.1319  & 3400.3  & 5.1029 $\times 10^{-5}$ \\
+Matter-Dark Energy Equality & -0.25582 & 0.29152 & 10.371                 \\
+Universe starts to accelerate ($\ddot a = 0$)               & -0.47941 & 0.61513 & 7.8234\\ 
+\hline                  
+\end{tabular}
+\end{table*}
+
+We can also see 
+
+The conformal time of today ($a = 1 \Rightarrow x = 0$) is 14.192 Gpc.
 
 \begin{figure}[ht]
 \centering
@@ -156,13 +248,6 @@ It is then useful to define the notion of conformal time $\eta$, the distance th
 
 \begin{figure}[ht]
 \centering
-\includegraphics[width=\hsize]{figures/Hp.pdf}
-  \caption{}
-     \label{}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
 \includegraphics[width=\hsize]{figures/t.pdf}
   \caption{}
      \label{}
@@ -171,13 +256,6 @@ It is then useful to define the notion of conformal time $\eta$, the distance th
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/eta_over_c.pdf}
-  \caption{}
-     \label{}
-\end{figure}
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\hsize]{figures/Omegas.pdf}
   \caption{}
      \label{}
 \end{figure}
@@ -203,26 +281,7 @@ It is then useful to define the notion of conformal time $\eta$, the distance th
      \label{}
 \end{figure}
 
-%                                             Two column Table 
-%-------------------------------------------------------------
-%
-\begin{table*}[ht]
-\caption{Nonlinear Model Results}             
-\label{table:1}      
-\centering          
-\begin{tabular}{l l l l}     % 7 columns 
-\hline\hline       
-                      % To combine 4 columns into a single one 
-& Logarithm of scale factor $x$      & Redshift $z$     & Cosmic time $t$ (Gyr)\\ 
-\hline                    
-Radiation-Matter Equality   & -8.1319  & 3400.3  & 5.1029 $\times 10^{-5}$ \\
-Matter-Dark Energy Equality & -0.25582 & 0.29152 & 10.371                 \\
-$\ddot a = 0$               & -0.47941 & 0.61513 & 7.8234\\ 
-\hline                  
-\end{tabular}
-\end{table*}
 
-The conformal time of today ($a = 1 \Rightarrow x = 0$) is 14.192 Gpc.
 
 \section{Conclusions}
 
