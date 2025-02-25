@@ -68,7 +68,7 @@
 
 \subsection{Background Cosmology}
 
-\section{Theoretical background}
+\section{Theoretical Background}
 
 \subsection{Background Cosmology}
 
@@ -87,18 +87,42 @@ where $H(a)$ is the so-called Hubble parameter and $H_0$ is the Hubble constant,
 \Omega_{\gamma 0} &= 2\cdot \frac{\pi^2}{30} \frac{(k_bT_{\rm CMB 0})^4}{\hbar^3 c^5} \cdot \frac{8\pi G}{3H_0^2},\\
 \Omega_{\nu 0} &= N_{\rm eff}\cdot \frac{7}{8}\cdot \left(\frac{4}{11}\right)^{4/3}\Omega_{\gamma 0},
 \end{align}
-whereas the densities for 
+whereas the densities for baryons and cold, dark matter are assumed to be, respectively, 0.05 and 0.267, the values given by \cite{2020}. The densities of all the components need to, of course, add up to one. We then find that 
+$\Omega_{\Lambda 0} = 1 - (\Omega_{b 0}+\Omega_{\rm CDM 0}) - (\Omega_{\gamma 0} + \Omega_{\nu 0}) - \Omega_{k 0}$, where, assuming a flat universe, $\Omega_{k 0} = 0$.
 
 We can get the component densities for different scale factors from
-\begin{align}
+\begin{equation}
+\label{eq:omegas}
+\begin{aligned}
 \Omega_{k}(a) &= \frac{\Omega_{k0}}{a^2H(a)^2/H_0^2}\\
 \Omega_{\rm CDM}(a) &= \frac{\Omega_{\rm CDM 0}}{a^3H(a)^2/H_0^2} \\
 \Omega_b(a) &= \frac{\Omega_{b 0}}{a^3H(a)^2/H_0^2} \\
 \Omega_\gamma(a) &= \frac{\Omega_{\gamma 0}}{a^4H(a)^2/H_0^2} \\
 \Omega_{\nu}(a) &= \frac{\Omega_{\nu 0}}{a^4H(a)^2/H_0^2} \\
 \Omega_{\Lambda}(a) &= \frac{\Omega_{\Lambda 0}}{H(a)^2/H_0^2}.
-\end{align}
+\end{aligned}
+\end{equation}
 
+
+We are interested in looking at specific points in time, such as the points when matter and radiation had the same density and when matter and dark energy had the same density (and subsequent dominating periods), and the time when the Universe started to accelerate.
+
+\subsubsection{Matter-Radiation Equality}
+
+We can find the time of matter-radiation equality by equating $
+\Omega_b + \Omega_{\rm CDM} = \Omega_\gamma + \Omega_{\nu}$. Using \eqref{eq:omegas}, we find that
+
+\begin{equation}
+    a\Omega_M = \Omega_R.
+\end{equation}
+
+\subsubsection{Matter-Radiation Equality}
+
+\subsubsection{Other useful notions}
+
+It is then useful to define the notion of conformal time $\eta$, the distance the light has traveled since the Big Bang, taking into account the expansion of the Universe. A differential equation for $\eta$ can be written as
+\begin{align}
+\frac{d\eta}{dx} = \frac{da}{dx}\frac{d\eta}{da} = \frac{c}{\mathcal{H}}.
+\end{align}
 
 
 \section{Implementation, numerical methods and tests}
