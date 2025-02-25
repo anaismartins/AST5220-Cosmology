@@ -49,16 +49,15 @@
   % {} leave it empty if necessary  
    {}
   % aims heading (mandatory)
-   {}
+   {We have simulated the large scales of the universe.}
   % methods heading (mandatory)
-   {}
+   {We use a Markov chain Monte Carlo to predict the densities of the different components of the Universe.}
   % results heading (mandatory)
-   {}
+   {We find the times of radiation-matter and matter-dark energy equality to be $x=−8.1319$ and $x=−0.25582$.}
   % conclusions heading (optional), leave it empty if necessary 
    {}
 
-   \keywords{
-               }
+   \keywords{CMB, Hubble constant, MCMC}
 
    \maketitle
 %
@@ -67,6 +66,8 @@
 \section{Introduction}
 
 \subsection{Background Cosmology}
+Since its discovery in 1964 \citep{1965ApJ...142..419P, 1965ApJ...142..414D}, the Cosmic Microwave Background (CMB) is still one of the biggest topics of interest in Cosmology today.
+As such, we are interested in simulating its power spectrum in order to fully understand how it looks like and how inflation might have looked like. It is useful to start with what the Universe looks like on large scales.
 
 \section{Theoretical Background}
 
@@ -183,7 +184,7 @@ In particular, we have two important quantities defined by ordinary differential
 
 \subsubsection{Markov Chain Monte Carlo Sampling}
 
-We are interested in finding the value of the Hubble constant $H_0$, as well as the densities of the components of the Universe. To do this, we run a Markov chain Monte Carlo method, sampling $h = \frac{H_0}{100\text{ km s}^{-1}\text{ Mpc}^{-1}}$ (the dimensionless Hubble constant), $\Omega_M$ and $\Omega_k$ from data from supernova type IA observations \citep{Betoule_2014}.
+We are interested in finding the value of the Hubble constant $H_0$, as well as the densities of the components of the Universe. To do this, we run a Markov chain Monte Carlo (MCMC) method, sampling $h = \frac{H_0}{100\text{ km s}^{-1}\text{ Mpc}^{-1}}$ (the dimensionless Hubble constant), $\Omega_M$ and $\Omega_k$ from data from supernova type IA observations \citep{Betoule_2014}.
 
 \section{Results}
 
@@ -221,71 +222,73 @@ Universe starts to accelerate ($\ddot a = 0$)               & -0.47941 & 0.61513
 \end{tabular}
 \end{table*}
 
-We can also see 
-
-The conformal time of today ($a = 1 \Rightarrow x = 0$) is 14.192 Gpc.
-
+It is also useful to look at the derivatives of $\mathcal H$ as well as the conformal time, in Figures \ref{fig:dhpdx}, \ref{fig:ddhpddx} and \ref{fig:eta}.
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/dHpdx_over_Hp.pdf}
-  \caption{}
-     \label{}
+  \caption{Evolution of the first derivative of the scaled Hubble parameter over the scaled Hubble parameter as a function of the logarithm of the scale factor.}
+     \label{fig:dhpdx}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/ddHpddx_over_Hp.pdf}
-  \caption{}
-     \label{}
+  \caption{Evolution of the second derivative of the scaled Hubble parameter over the scaled Hubble parameter as a function of the logarithm of the scale factor.}
+     \label{fig:ddhpddx}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/etaHp_over_c.pdf}
-  \caption{}
-     \label{}
+  \caption{Evolution of the conformal time times the scaled Hubble parameter as a function of the logarithm of the scale factor.}
+     \label{fig:eta}
+\end{figure}
+
+As a sanity check, it is also good to look at the trends in the conformal and cosmic times in Figures \ref{fig:eta} and \ref{fig:t}. As expected, they both have an upwards trend. Additionally, we can calculate that the conformal time of today ($a = 1 \Rightarrow x = 0$) is 14.192 Gpc.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=\hsize]{figures/eta_over_c.pdf}
+  \caption{Conformal time as a function of the logarithm of the scale factor.}
+     \label{fig:eta}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/t.pdf}
-  \caption{}
-     \label{}
+  \caption{Cosmic time as a function of the logarithm of the scale factor.}
+     \label{fig:t}
 \end{figure}
 
-\begin{figure}[ht]
-\centering
-\includegraphics[width=\hsize]{figures/eta_over_c.pdf}
-  \caption{}
-     \label{}
-\end{figure}
+An interesting result is comparing our model to the data from \cite{Betoule_2014} by looking at the luminosity distance measure in Figure \ref{fig:dL}.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/dL.pdf}
-  \caption{}
-     \label{}
+  \caption{Luminosity distance as a function of the logarithm of the scale factor. Our model is represented as the blue curve and the date is represented as the orange circles with their respective error bars.}
+     \label{fig:dL}
 \end{figure}
+
+We now want to take a look at our MCMC fits. In Figure \ref{fig:fitting}, we can see the 1$\sigma$ prediction for the value of the densities of matter and dark energy. Our predictions agree with a flat Universe. Lastly, we have a 1$\sigma$ posterior prediction for the Hubble constant as shown in Figure \ref{fit:hist} around 70 km s$^{-1}$ Mpc$^{-1}$, which does not span to the Planck best-fit value. This might be because our model is not intricate enough yet to describe the Universe. However, it is still fairly close to the values predicted by different recent experiments.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/fitting.pdf}
-  \caption{}
-     \label{}
+  \caption{1$\sigma$ prediction for the densities of matter and dark energy.}
+     \label{fig:fitting}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/histogram.pdf}
-  \caption{}
-     \label{}
+  \caption{1$\sigma$ prediction for the Hubble constant.}
+     \label{fit:hist}
 \end{figure}
-
-
 
 \section{Conclusions}
 
 \subsection{Background Cosmology}
+We have simulated the Universe from the CMB until the present day. We present various results and compare them to experimental data which validates our model to reasonable accuracy. In particular we find that the radiation-matter and matter-dark energy equality happen, respectively, at $x = -8.1319$ and $x = -0.25582$, whereas the Universe starts to accelerate at $x=-0.47941$.
 
 \begin{acknowledgements}
 
