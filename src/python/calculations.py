@@ -3,6 +3,9 @@ import astropy.units as u
 import numpy as np
 from BackgroundCosmology import BackgroundCosmology
 
+m = 1
+Mpc = 3.08567758e22 * m
+
 h = 0.67
 OmegaB0 = 0.05
 OmegaCDM0 = 0.267
@@ -74,3 +77,7 @@ t_acceleration = cosmo.get_cosmic_time(x_acceleration) * u.s
 print(f"t = {t_acceleration.to(u.Gyr)}")
 
 # conformal time today
+print("Conformal time today")
+x_today = 0
+eta_today = cosmo.eta_of_x(x_today) / Mpc / 1e3
+print(f"eta = {eta_today} Gpc")

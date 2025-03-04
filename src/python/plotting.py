@@ -7,6 +7,9 @@ file = "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/data/co
 # Read the file
 data = np.loadtxt(file)
 
+x_radiation_matter = -8.131921542438867
+x_matter_lambda = -0.25581887374692047
+
 m = 1
 km = 1e3 * m
 s = 1
@@ -31,6 +34,22 @@ dL = data[:, 13]
 
 # Plot
 plt.plot(x, dHpdx / Hp)
+plt.vlines(
+    x_radiation_matter,
+    min(dHpdx / Hp),
+    max(dHpdx / Hp),
+    label="Radiation-matter equality",
+    color="black",
+    linestyle="--",
+)
+plt.vlines(
+    x_matter_lambda,
+    min(dHpdx / Hp),
+    max(dHpdx / Hp),
+    label="Matter-dark energy equality",
+    color="black",
+    linestyles="-.",
+)
 plt.xlabel(r"$x$")
 plt.ylabel(r"$\frac{d\mathcal{H}}{dx}\frac{1}{\mathcal{H}}$")
 plt.savefig(
@@ -39,6 +58,22 @@ plt.savefig(
 plt.clf()
 
 plt.plot(x, ddHpddx / Hp)
+plt.vlines(
+    x_radiation_matter,
+    min(ddHpddx / Hp),
+    max(ddHpddx / Hp),
+    label="Radiation-matter equality",
+    color="black",
+    linestyle="--",
+)
+plt.vlines(
+    x_matter_lambda,
+    min(ddHpddx / Hp),
+    max(ddHpddx / Hp),
+    label="Matter-dark energy equality",
+    color="black",
+    linestyles="-.",
+)
 plt.xlabel(r"$x$")
 plt.ylabel(r"$\frac{d^2\mathcal{H}}{dx^2}\frac{1}{\mathcal{H}}$")
 plt.savefig(
@@ -156,6 +191,7 @@ plt.savefig(
 plt.clf()
 
 plt.hist(h_fit[sigma1] * 100, bins=100)
+# plt.vlines(67, 0, 100, label="Planck 2018", color="black", linestyle="--")
 plt.xlabel(r"$H_0$ (km/s/Mpc)")
 plt.savefig(
     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/histogram.pdf"
@@ -165,9 +201,6 @@ plt.clf()
 # eras plot
 x_start = np.log(1e-8)
 x_end = 0
-
-x_radiation_matter = -8.131921542438867
-x_matter_lambda = -0.25581887374692047
 
 plt.plot(x, OmegaB + OmegaCDM, label=r"$\Omega_M$")
 plt.plot(x, OmegaGamma + OmegaNu, label=r"$\Omega_R$")
