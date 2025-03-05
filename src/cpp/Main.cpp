@@ -29,6 +29,12 @@ int main(int argc, char **argv)
   double n_s = 0.965;
   double kpivot_mpc = 0.05;
 
+  // Reionization parameters
+  double z_reion = 8.;
+  double delta_z_reion = 0.5;
+  double z_Hereion = 3.5;
+  double delta_z_Hereion = 0.5;
+
   //=========================================================================
   // Module I
   //=========================================================================
@@ -50,7 +56,7 @@ int main(int argc, char **argv)
   //=========================================================================
 
   // Solve the recombination history
-  RecombinationHistory rec(&cosmo, Yp);
+  RecombinationHistory rec(&cosmo, Yp, z_reion, delta_z_reion, z_Hereion, delta_z_Hereion);
   rec.solve();
   rec.info();
 

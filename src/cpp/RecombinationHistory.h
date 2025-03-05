@@ -17,6 +17,10 @@ private:
 
   // Helium fraction
   double Yp;
+  double z_reion;
+  double delta_z_reion;
+  double z_Hereion;
+  double delta_z_Hereion;
 
   // The start and end points for recombination arrays (can be modified)
   const double x_start = Constants.x_start;
@@ -58,7 +62,11 @@ public:
   RecombinationHistory() = delete;
   RecombinationHistory(
       BackgroundCosmology *cosmo,
-      double Yp);
+      double Yp,
+      double z_reion,
+      double delta_y_reion,
+      double z_Hereion,
+      double delta_y_Hereion);
 
   // Do all the solving
   void solve();
