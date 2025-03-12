@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 
   // Do the supernova fits. Uncomment when you are ready to run this
   // Make sure you read the comments on the top of src/SupernovaFitting.h
-  mcmc_fit_to_supernova_data("data/supernovadata.txt", "output/data/results_supernovafitting.txt");
+  // mcmc_fit_to_supernova_data("data/supernovadata.txt", "output/data/results_supernovafitting.txt");
 
   //=========================================================================
   // Module II
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
   rec.info();
 
   // Output recombination quantities
-  rec.output("recombination.txt");
+  rec.output("output/data/recombination.txt");
 
   // Remove when module is completed
   return 0;
