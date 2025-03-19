@@ -198,7 +198,7 @@ double BackgroundCosmology::get_luminosity_distance_of_x(double x) const
   double a = exp(x);
 
   double chi = get_comoving_distance_of_x(x);
-  double term = sqrt(abs(OmegaK0) * H0 * chi / Constants.c);
+  double term = sqrt(abs(OmegaK0)) * H0 * chi / Constants.c;
 
   double r;
 
@@ -238,7 +238,7 @@ double BackgroundCosmology::get_cosmic_time(double x) const
 
 double BackgroundCosmology::get_z(double x) const
 {
-  return exp(x_end) / exp(x) - 1;
+  return 1 / exp(x) - 1;
 }
 
 double BackgroundCosmology::get_H0() const

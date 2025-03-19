@@ -54,6 +54,7 @@ private:
 
   // Splines contained in this class
   Spline log_Xe_of_x_spline{"Xe"};
+  Spline Xe_of_x_spline_saha{"Xe_Saha"};
   Spline tau_of_x_spline{"tau"};
   Spline g_tilde_of_x_spline{"g"};
 
@@ -85,6 +86,7 @@ public:
   double dgdx_tilde_of_x(double x) const;
   double ddgddx_tilde_of_x(double x) const;
   double Xe_of_x(double x) const;
+  double Xe_of_x_Saha(double x) const;
   double ne_of_x(double x) const;
   double get_Yp() const;
 };
