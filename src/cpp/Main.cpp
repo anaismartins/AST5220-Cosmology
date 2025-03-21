@@ -63,6 +63,8 @@ int main(int argc, char **argv)
   // Output recombination quantities
   rec.output("output/data/recombination.txt");
 
+  std::cout << "Finsihed RecombinationHistory" << std::endl;
+
   // Remove when module is completed
   return 0;
 

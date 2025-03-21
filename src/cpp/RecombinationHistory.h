@@ -65,9 +65,9 @@ public:
       BackgroundCosmology *cosmo,
       double Yp,
       double z_reion,
-      double delta_y_reion,
+      double delta_z_reion,
       double z_Hereion,
-      double delta_y_Hereion);
+      double delta_z_Hereion);
 
   // Do all the solving
   void solve();
@@ -90,5 +90,12 @@ public:
   double ne_of_x(double x) const;
   double get_Yp() const;
 };
+
+extern "C"
+{
+  RecombinationHistory *RecombinationHistory_new(double Yp, double z_reion, double delta_z_reion, double z_Hereion, double delta_z_Hereion, BackgroundCosmology *cosmo);
+  void RecombinationHistory_solve(RecombinationHistory *rec);
+  double RecombinationHistory_tau_of_x(RecombinationHistory *rec, double x);
+}
 
 #endif
