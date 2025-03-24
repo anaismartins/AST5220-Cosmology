@@ -357,4 +357,14 @@ extern "C"
   {
     return bc->eta_of_x(x);
   }
+
+  double BackgroundCosmology_get_TCMB(BackgroundCosmology *bc, double x)
+  {
+    return bc->get_TCMB(x);
+  }
+
+  double BackgroundCosmology_get_z(BackgroundCosmology *bc, double x)
+  {
+    return bc->get_z(x);
+  }
 }

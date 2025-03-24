@@ -6,12 +6,13 @@
 
 RecombinationHistory::RecombinationHistory(
     BackgroundCosmology *cosmo,
-    double Yp, double z_reion, double delta_z_reion, double z_Hereion, double delta_z_Hereion) : cosmo(cosmo),
-                                                                                                 Yp(Yp),
-                                                                                                 z_reion(z_reion),
-                                                                                                 delta_z_reion(delta_z_reion),
-                                                                                                 z_Hereion(z_Hereion),
-                                                                                                 delta_z_Hereion(delta_z_Hereion)
+    double Yp, double z_reion, double delta_z_reion, double z_Hereion, double delta_z_Hereion, bool reion) : cosmo(cosmo),
+                                                                                                             Yp(Yp),
+                                                                                                             z_reion(z_reion),
+                                                                                                             delta_z_reion(delta_z_reion),
+                                                                                                             z_Hereion(z_Hereion),
+                                                                                                             delta_z_Hereion(delta_z_Hereion),
+                                                                                                             reion(reion)
 
 {
 }
@@ -118,37 +119,42 @@ void RecombinationHistory::solve_number_density_electrons()
     }
   }
 
-  for (int i = 0; i < npts_rec_arrays; i++)
+  printf("Reionization flag: %s\n", reion ? "true" : "false");
+
+  if (reion)
   {
-    if (x_array[i] > x_change)
+    for (int i = 0; i < npts_rec_arrays; i++)
     {
-      double z = cosmo->get_z(x_array[i]);
-
-      // Introduce reionization
-      double f_He = Yp / (4. * (1 - Yp));
-      double y_reion = pow(1. + z_reion, 1.5);
-      double y = exp(-3. * x_array[i] / 2.);
-      double delta_y_reion = 3. / 2. * sqrt(1. + z_reion) * delta_z_reion;
-
-      // double f_e = Xe_array_Peebles[1] / (1. - Yp);
-
-      double dXe_H = (1. + f_He) / 2. * (1 + tanh((y_reion - y) / delta_y_reion));
-      double dXe_He = f_He / 2. * (1 + tanh((z_Hereion - z) / delta_z_Hereion));
-      double Xe = Xe_arr[i] + dXe_H;
-
-      // Introduce Helium reionization
-      Xe = Xe + dXe_He;
-
-      // std::cout << f_He << " " << z << " " << dXe_1 << " " << dXe_2 << " " << std::endl;
-
-      // Store the result
-      Xe_arr[i] = Xe;
-
-      // check for nans
-      if (std::isnan(Xe_arr[i]))
+      if (x_array[i] > x_change)
       {
-        printf("Xe_arr[i] = %f\n", Xe_arr[i]);
-        exit(0);
+        double z = cosmo->get_z(x_array[i]);
+
+        // Introduce reionization
+        double f_He = Yp / (4. * (1 - Yp));
+        double y_reion = pow(1. + z_reion, 1.5);
+        double y = exp(-3. * x_array[i] / 2.);
+        double delta_y_reion = 3. / 2. * sqrt(1. + z_reion) * delta_z_reion;
+
+        // double f_e = Xe_array_Peebles[1] / (1. - Yp);
+
+        double dXe_H = (1. + f_He) / 2. * (1 + tanh((y_reion - y) / delta_y_reion));
+        double dXe_He = f_He / 2. * (1 + tanh((z_Hereion - z) / delta_z_Hereion));
+        double Xe = Xe_arr[i] + dXe_H;
+
+        // Introduce Helium reionization
+        Xe = Xe + dXe_He;
+
+        // std::cout << f_He << " " << z << " " << dXe_1 << " " << dXe_2 << " " << std::endl;
+
+        // Store the result
+        Xe_arr[i] = Xe;
+
+        // check for nans
+        if (std::isnan(Xe_arr[i]))
+        {
+          printf("Xe_arr[i] = %f\n", Xe_arr[i]);
+          exit(0);
+        }
       }
     }
   }
@@ -513,7 +519,7 @@ void RecombinationHistory::output(const std::string filename) const
     fp << g_tilde_of_x(x) << " ";
     fp << dgdx_tilde_of_x(x) << " ";
     fp << ddgddx_tilde_of_x(x) << " ";
-    std::cout << "Finished writing data at x = " << x << "\n";
+    // std::cout << "Finished writing data at x = " << x << "\n";
     fp << "\n";
   };
   std::for_each(x_array.begin(), x_array.end(), print_data);
@@ -522,9 +528,9 @@ void RecombinationHistory::output(const std::string filename) const
 
 extern "C"
 {
-  RecombinationHistory *RecombinationHistory_new(double Yp, double z_reion, double delta_z_reion, double z_Hereion, double delta_z_Hereion, BackgroundCosmology *cosmo)
+  RecombinationHistory *RecombinationHistory_new(BackgroundCosmology *cosmo, double Yp, double z_reion, double delta_z_reion, double z_Hereion, double delta_z_Hereion, bool reion)
   {
-    return new RecombinationHistory(cosmo, Yp, z_reion, delta_z_reion, z_Hereion, delta_z_Hereion);
+    return new RecombinationHistory(cosmo, Yp, z_reion, delta_z_reion, z_Hereion, delta_z_Hereion, reion);
   }
 
   void RecombinationHistory_solve(RecombinationHistory *rec)
@@ -535,5 +541,15 @@ extern "C"
   double RecombinationHistory_tau_of_x(RecombinationHistory *rec, double x)
   {
     return rec->tau_of_x(x);
+  }
+
+  double RecombinationHistory_g_tilde_of_x(RecombinationHistory *rec, double x)
+  {
+    return rec->g_tilde_of_x(x);
+  }
+
+  double RecombinationHistory_Xe_of_x(RecombinationHistory *rec, double x)
+  {
+    return rec->Xe_of_x(x);
   }
 }

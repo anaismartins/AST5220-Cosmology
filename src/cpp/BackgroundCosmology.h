@@ -84,6 +84,8 @@ extern "C"
   double BackgroundCosmology_get_H_of_x(BackgroundCosmology *bc, double x);
   double BackgroundCosmology_get_dHpdx_of_x(BackgroundCosmology *bc, double x);
   double BackgroundCosmology_eta_of_x(BackgroundCosmology *bc, double x);
+  double BackgroundCosmology_get_TCMB(BackgroundCosmology *bc, double x);
+  double BackgroundCosmology_get_z(BackgroundCosmology *bc, double x);
 }
 
 #endif

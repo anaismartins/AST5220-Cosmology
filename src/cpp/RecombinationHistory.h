@@ -22,6 +22,8 @@ private:
   double z_Hereion;
   double delta_z_Hereion;
 
+  bool reion;
+
   // The start and end points for recombination arrays (can be modified)
   const double x_start = Constants.x_start;
   const double x_end = Constants.x_end;
@@ -67,7 +69,7 @@ public:
       double z_reion,
       double delta_z_reion,
       double z_Hereion,
-      double delta_z_Hereion);
+      double delta_z_Hereion, bool reion);
 
   // Do all the solving
   void solve();
@@ -93,9 +95,11 @@ public:
 
 extern "C"
 {
-  RecombinationHistory *RecombinationHistory_new(double Yp, double z_reion, double delta_z_reion, double z_Hereion, double delta_z_Hereion, BackgroundCosmology *cosmo);
+  RecombinationHistory *RecombinationHistory_new(BackgroundCosmology *cosmo, double Yp, double z_reion, double delta_z_reion, double z_Hereion, double delta_z_Hereion, bool reion);
   void RecombinationHistory_solve(RecombinationHistory *rec);
   double RecombinationHistory_tau_of_x(RecombinationHistory *rec, double x);
+  double RecombinationHistory_g_tilde_of_x(RecombinationHistory *rec, double x);
+  double RecombinationHistory_Xe_of_x(RecombinationHistory *rec, double x);
 }
 
 #endif

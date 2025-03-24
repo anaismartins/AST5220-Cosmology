@@ -56,7 +56,7 @@ int main(int argc, char **argv)
   //=========================================================================
 
   // Solve the recombination history
-  RecombinationHistory rec(&cosmo, Yp, z_reion, delta_z_reion, z_Hereion, delta_z_Hereion);
+  RecombinationHistory rec(&cosmo, Yp, z_reion, delta_z_reion, z_Hereion, delta_z_Hereion, false);
   rec.solve();
   rec.info();
 
