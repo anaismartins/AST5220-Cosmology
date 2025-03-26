@@ -26,6 +26,7 @@
 
 \usepackage{color}
 \newcommand{\hw}[1]{\textcolor{red}{HW: #1}}
+\newcommand{\todo}[1]{\textcolor{green}{TODO: #1}}
 
 \begin{document} 
 
@@ -53,15 +54,15 @@
   % {} leave it empty if necessary  
    {}
   % aims heading (mandatory)
-   {We have simulated the large scales of the universe.}
+   {We have simulated the large scales of the universe, as well as the recombination and reionisation processes.}
   % methods heading (mandatory)
-   {We use a Markov chain Monte Carlo to predict the densities of the different components of the Universe.}
+   {We use a Markov chain Monte Carlo to predict the densities of the different components of the Universe, as well as solving ordinary differential equations using a fourth-order Runge-Kutta method.}
   % results heading (mandatory)
-   {We find the times of radiation-matter and matter-dark energy equality to be $x=-8.1319$ and $x=-0.25582$.}
+   {We find the times of radiation-matter and matter-dark energy equality to be $x=-8.1319$ and $x=-0.25582$. Recombination happens at $x=-7.0$, while recombination happens at $x=-2.2$.}
   % conclusions heading (optional), leave it empty if necessary 
    {}
 
-   \keywords{CMB, Hubble constant, MCMC}
+   \keywords{CMB, Hubble constant, MCMC, Recombination, Reionisation}
 
    \maketitle
 %
@@ -249,11 +250,18 @@ In order to include the process of reionization, which is part of the Universe's
 X_e &= X_e^{\rm Peebles}\nonumber\\ &+ \frac{1+f_{\rm He}}{2}\left(1+\tanh\frac{y_{\rm reion}-y}{\Delta y_{\rm reion}}\right)\\ &+ \frac{f_{\rm He}}{2}\left(1 + \tanh \frac{z_{\rm He reion}-z}{\Delta z_{\rm He reion}}\right)\nonumber
 \end{align}
 
+We are particularly interested in finding the time the last scattering happened, as well as recombination, which happened around the same time, i.e. a process called decoupling. The time of the last scattering can be defined as when the optical depth $\tau=1$, as that is the time the medium becomes transparent and CMB photons can travel until today. At the same time, recombination can be defined as when the fractional electron density $X_e = 0.1$.
+
+Another interesting quantity to look at is the sound horizon -- the distance a sound-wave can travel from the Big Bang until a certain time $x$, given by
+\begin{equation}
+    s(x) = \int_0^{a} \frac{c_s dt}{a} = \int_{-\infty}^{x} \frac{c_s dx}{\mathcal{H}} \to \frac{ds(x)}{dx} = \frac{c_s}{\mathcal{H}}.
+\end{equation}
+
 \section{Implementation, numerical methods and tests}
 
-\subsection{Background Cosmology}
-
 We now want to use the previously presented equations in order to compute the relevant quantities over different scale factors. The code to reproduce this simulation is available at \url{https://github.com/anaismartins/AST5220-Cosmology}. For more readable but still fast calculations, these were written in Python (\texttt{src/python}) with equations ported from C++ (\texttt{src/cpp}) using \texttt{ctypes} \citep{ctypes}.
+
+\subsection{Background Cosmology}
 
 \subsubsection{Solving ODEs}
 
@@ -386,20 +394,75 @@ We now want to take a look at our MCMC fits. In Figure \ref{fig:fitting}, we can
 
 \subsection{Recombination History}
 
-The last scattering surface is at x = -6.990913222773562, z = 1085.7134346343028, t = 11810590031016.506
-Recombination happens at x = -6.97011625341667, z = 1063.3464772606267, t = 12231033758767.107
-Recombination happens at x = -7.140341934397215, z = 1260.8597886051207, t = 9173516291000.174 according to Saha
+Figure \ref{fig:Xe-Saha} shows the fractional electron density $X_e$ over time $x$. The blue line describes the Saha solution. The orange line describes the full solution, starting by solving the Saha equations, until $X_e$ reaches 0.99, and then by solving the Peebles ODE. The Saha equations give a solution that falls off much faster than what is verified by experiments, and thus the need arises for the Peebles solution. Furthermore, we show the times of the last scattering and recombination, which happen almost simultaneously. Saha also predicts that recombination happens earlier than Peebles, consequence of the $X_e$ curve falling off faster. Around -8.5 to -8 and -8 to -7.5, we can see the recombination stages of singly and doubly ionised helium, following by that of hydrogen.
 
-Freeze-out abundance is Xe = 0.00026736243845496357
+As we tend towards freeze-out, we can see that the fractional electron density is stable since recombination at around $0.00026736$, when ionisation is not considered.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\hsize]{report/figures/Xe.pdf}
+    \caption{Fractional electron density $X_e$ given by the Saha equations (blue) and by full solution (orange) over time. Relevant times are marked in black vertical lines: the last scattering surface (surface) (LSS) (dashed),  recombination (dot-dashed) and recombination when calculated according only to the Saha equations (dotted). Reionisation is not used for the curves represented in this plot.}
+    \label{fig:Xe-Saha}
+\end{figure}
+
+Calculating the fractional energy density until today, we find Figure \ref{fig:Xe-reion}. The helium recombination drop-offs are more obvious in this plot, as it is in linear scale on the y-axis, as opposed to the previous plot, which was in logarithmic scale and aimed to look at the differences between the full solution and the Saha solution. We can also see that the electron density rises again after reionization, both for hydrogen and helium. As such, we are able to identify three matter epochs: plasma (green), neutral hydrogren and helium (red) and neutral and ionised species (purple), which are separated by recombination and ionisation. These times are listed in Table \ref{table:times-rec}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\hsize]{report/figures/Xe-reion.pdf}
+    \caption{Fractional electron density $X_e$ (blue) over time. The dominating matter epochs are shown by the horizontal lines: plasma (green) dominates in the early Universe, neutral hydrogen and helium (red) dominate after recombination and before reionization, and a mixture of neutral and ionised species (purple) dominate after reionization.}
+    \label{fig:Xe-reion}
+\end{figure}
+
+\begin{table*}[ht]
+\caption{Times of relevant events in recombination history.}             
+\label{table:times-rec}      
+\centering          
+\begin{tabular}{l l l l}     % 7 columns 
+\hline\hline       
+                      % To combine 4 columns into a single one 
+& Logarithm of scale factor $x$      & Redshift $z$     & Cosmic time $t$ (Myr)\\ 
+\hline                    
+Last scattering   & -6.9901  & 1084.8  & 0.37478 \\
+Recombination & -6.9701 & 1063.3 & 0.38758                 \\
+Recombination (according to Saha) & -7.1403 & 1260.9 & 0.29069\\
+Reionisation & -2.2014 & 8.0377 & 633.34\\
+\hline                  
+\end{tabular}
+\end{table*}
+
+The optical depth $\tau$ (blue) and its first (orange, times -1) and second (green) derivatives w.r.t. $x$ over time $x$ are shown in Figure \ref{fig:tau}. We can see that the optical depth in the early Universe is very large, meaning the photon-baryon plasma is an optically thick medium, where no light can be transmitted. The time of the last scattering is pointed out by the black vertical dashed line, defined by $\tau=1$. After this point, the optical depth is lower than one stable until reionisation, and thereafter it starts decreasing again, meaning photons are able to travel through the medium since recombination until today.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\hsize]{report/figures/tau.pdf}
+    \caption{Optical depth $\tau$ (blue), as well as its first (orange) and second (green) derivatives w.r.t. $x$ over time. The time of the last scattering is pointed out by the black vertical dashed line.}
+    \label{fig:tau}
+\end{figure}
+
+One last useful visualization is Figure \ref{fig:gtilde}, where we look at the visibility function $\tilde g$ (blue) and its first (orange) and second (green) derivatives w.r.t. $x$ over $x$, with each curve normalized. $\tilde g$ peaks around the same time as recombination, and then there is a smaller peak around reionisation.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\hsize]{report/figures/gtilde.pdf}
+    \caption{Visibility function $\tilde g$ (blue) and its first (orange) and second (green) derivatives w.r.t. $x$ over time. All are normalized.}
+    \label{fig:gtilde}
+\end{figure}
+
+We can calculate the distance a sound-wave can propagate through the photon-baryon plasma from the Big Bang until recombination by calculating the sound-horizon at decoupling, which is then $r_s = 144.84$ Mpc.
 
 \section{Conclusions}
 
 \subsection{Background Cosmology}
 We have simulated the Universe from the CMB until the present day. We present various results and compare them to experimental data which validates our model to reasonable accuracy. In particular we find that the radiation-matter and matter-dark energy equality happen, respectively, at $x = -8.1319$ and $x = -0.25582$, whereas the Universe starts to accelerate at $x=-0.47941$.
 
-\begin{acknowledgements}
+\subsection{Recombination History}
 
-\end{acknowledgements}
+We have simulated the recombination and reionisation events, considering that the neutral atoms era is made up of only hydrogen and helium. For this, we calculated the electron fraction using the Saha and Peebles equations, which then gives us the optical depth which in turn gives us the visibility function. We find that decoupling happens around $x=-7$ and reionisation around $x=2.2$. The fractional electron density $X_e$ at freeze-out is 0.00026736. The sound-horizon at decoupling $r_s$ is 144.84 Mpc.
+
+%\begin{acknowledgements}
+
+%\end{acknowledgements}
 
 % WARNING
 %-------------------------------------------------------------------
