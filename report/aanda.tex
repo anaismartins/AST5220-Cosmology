@@ -23,6 +23,10 @@
 % To add links in your PDF file, use the package "hyperref"
 % with options according to your LaTeX or PDFLaTeX drivers.
 %
+
+\usepackage{color}
+\newcommand{\hw}[1]{\textcolor{red}{HW: #1}}
+
 \begin{document} 
 
 
@@ -53,7 +57,7 @@
   % methods heading (mandatory)
    {We use a Markov chain Monte Carlo to predict the densities of the different components of the Universe.}
   % results heading (mandatory)
-   {We find the times of radiation-matter and matter-dark energy equality to be $x=−8.1319$ and $x=−0.25582$.}
+   {We find the times of radiation-matter and matter-dark energy equality to be $x=-8.1319$ and $x=-0.25582$.}
   % conclusions heading (optional), leave it empty if necessary 
    {}
 
@@ -68,6 +72,19 @@
 \subsection{Background Cosmology}
 Since its discovery in 1964 \citep{1965ApJ...142..419P, 1965ApJ...142..414D}, the Cosmic Microwave Background (CMB) is still one of the biggest topics of interest in Cosmology today.
 As such, we are interested in simulating its power spectrum in order to fully understand how it looks like and how inflation might have looked like. It is useful to start with what the Universe looks like on large scales.
+
+\hw{1.1 A bit brief. A bit more context would be good here.}
+
+\subsection{Recombination History}
+
+A significant event in the history of the Universe is recombination. In this process, the Universe goes from being made up of a tightly coupled plasma of charged particles to having its elements combine into atoms, mostly of Hydrogen and Helium. Photons interacting with atoms is a much less common and significant occurrence than with the previously common electrons and protons, thus making it possible for photons to travel freely and so the CMB is released, letting us observe it today.
+
+\begin{figure*}[ht]
+\caption{History of the Universe. Credit: NAOJ}             
+\label{fig:history}      
+\centering          
+\includegraphics[width=\textwidth]{report/figures/eso1620a.jpg}
+\end{figure*}
 
 \section{Theoretical Background}
 
@@ -104,14 +121,14 @@ We can get the component densities for different scale factors from
 \end{aligned}
 \end{equation}
 
-It is handy to explore the Hubble parameter equations before introducing some new notions. In particular, a useful quantity is the scaled Hubble parameter $\mathcal H = aH$. Deriving this with respect to $x = \log a$ and denoting the derivative with respect to $x$ as ', we have
+It is handy to explore the Hubble parameter equations before introducing some new notions. In particular, a useful quantity is the scaled Hubble parameter $\mathcal H = aH$. Differentiating this with respect to $x = \log a$ and denoting the derivative with respect to $x$ as ', we have
 \begin{align}
     \mathcal H' &= \frac{d\mathcal H}{dx} = \frac{da}{dx}\frac{d\mathcal H}{da}\\ 
     &= a\left( H(a) + \frac{1}{2}\frac{aH_0^2}{ H(a)} (-3\Omega_{M0} a^{-4} - 4\Omega_{R0}a^{-5}-2\Omega_{k0}a^{-3})\right)\\
     &= \mathcal H(x) +\frac{1}{2}\frac{(e^xH_0)^2}{\mathcal H(x)}(-3\Omega_{M0} e^{-3x} - 4 \Omega_{R0}e^{-4x}-2\Omega_{k0}e^{-2x}).
 \end{align}
 
-Deriving once more, we get
+Differentiating once more, we get
 \begin{alignat*}{2}
     \mathcal H'' &= \frac{d^2\mathcal H}{dx^2}&&\\ 
     &= \mathcal H'\Bigg(1-&&\frac{1}{4}\left(\frac{e^xH_0}{\mathcal H(x)}\right)^5\\
@@ -135,6 +152,8 @@ For a flat Universe, we can define the luminosity distance, i.e. given the intri
     d_L = \frac{\chi}{a}.
 \end{equation}
 
+\hw{Eq. 11 is for a flat Universe only - you need this in general as this is what you implement.}
+
 A last useful notion before we get into some deductions is that of cosmic time $t$, which is given by solving
 \begin{align}
 \label{eq:t-ode}
@@ -151,6 +170,8 @@ We can find the time of matter-radiation equality by equating $
 \begin{equation}
     a = \frac{\Omega_R}{\Omega_M}.
 \end{equation}
+
+\hw{Eq. 13 It's OmegaR0 / OmegaM0 on the RHS. Same for Eq. 14}
 
 \subsubsection{Matter-Radiation Equality}
 
@@ -172,23 +193,95 @@ where we know a handy expression for $\frac{dx}{dt}$ from \eqref{eq:t-ode} and w
 \end{equation}
 where ' denotes the derivative in terms of $x$.
 
+\hw{Eq. 16 has an analytical solution (only matter and dark energy is relevant in H at this point).}
+
+\subsection{Recombination History}
+
+A concept that is deeply related to the process of recombination is that of optical depth $\tau$. The optical depth is a quantity that defines the transparency of a medium to photons. If a medium has $\tau\gg1$, then we call it optically thick and no light is transmitted through it -- this was the state of the Universe before recombination. As electrons and protons combine, photons start being able to move freely without interacting with them, and the Universe's medium becomes optically thin ($\tau\ll 1$). Calculating $\tau$ will let us know when recombination happened.
+
+The optical depth is then given by
+\begin{equation}
+\tau(\eta) = \int_{\eta}^{\eta_0} n_e \sigma_T a d\eta',
+\end{equation}
+where $n_e$ is the number density of electrons and $\sigma_T$ is the Thomson cross-section. It also has the following differential form:
+\begin{equation}
+\frac{d\tau}{dx} = -\frac{c n_e \sigma_T}{H}.
+\end{equation}
+
+A related notion is the so-called visibility function $\tilde g$, which describes the probability density of a given photon having last scattered at $x$, given by:
+\begin{equation}
+\tilde{g}(x) = \frac{d}{dx}e^{-\tau} = -\frac{d\tau}{dx}e^{-\tau}.
+\end{equation}
+
+To calculate these, we need to know how the number density of electrons $n_e$ varies over time. This is given over two different regimes: when $X_e = n_e/n_b \approx 1$ and when $X_e < 1$, where $n_b$ is the number density of baryons.
+
+These quantities are given by the Saha approximation in the first regime, which translates to the following system of equations, when considering the Universe after recombination is made up of hydrogen and helium:
+
+\begin{align}
+n_e\frac{x_{\rm He+}}{1-x_{\rm He+}-x_{\rm He++}} &= 2\left(\frac{m_eT_b}{2\pi}\right)^{3/2}e^{-\chi_0/T_b},\\
+n_e\frac{x_{\rm He++}}{x_{\rm He+}} &= 4\left(\frac{m_eT_b}{2\pi}\right)^{3/2}e^{-\chi_1/T_b},\\
+n_e\frac{x_{\rm H+}}{1-x_{\rm H+}} &= \left(\frac{m_eT_b}{2\pi}\right)^{3/2}e^{-\epsilon_0/T_b}, \label{eq:saha_h}
+\end{align}
+
+where $x_X$ is the ratio between the number density of an ionised state of an element and the number density of the same element in any state, $m_e$ is the electron mass, $T_b = T_\text{CMB0}/a$ is the baryon temperature and $\chi_0$, $\chi_1$ and $\epsilon_0$ are the ionisation energies of neutral helium, singly ionised helium and hydrogen, respectively.
+
+In the second regime, we can use the Peebles equation in order to describe these quantities, which is given by the following Ordinary Differential Equation (ODE):
+\begin{equation}
+\frac{dX_e}{dx} = \frac{C_r(T_b)}{H} \left[\beta(T_b)(1-X_e) - n_H
+\alpha^{(2)}(T_b)X_e^2\right],
+\end{equation}
+where
+\begin{align}
+C_r(T_b) &= \frac{\Lambda_{2s\rightarrow1s} + \Lambda_{\alpha}}{\Lambda_{2s\rightarrow1s} + \Lambda_{\alpha} + \beta^{(2)}(T_b)},\\
+\Lambda_{2s\rightarrow1s} &= 8.227 \textrm{s}^{-1},\\
+\Lambda_{\alpha} &= H\frac{(3\epsilon_0)^3}{(8\pi)^2 n_{1s}},\\
+n_{1s} &= (1-X_e)n_H,\\
+n_H &= (1-Y_p)\frac{3H_0^2\Omega_{b0}}{8\pi G m_H a^3},\\
+\beta^{(2)}(T_b) &= \beta(T_b) e^{3\epsilon_0/4T_b},\\
+\beta(T_b) &= \alpha^{(2)}(T_b) \left(\frac{m_eT_b}{2\pi}\right)^{3/2} e^{-\epsilon_0/T_b},\\
+\alpha^{(2)}(T_b) &= \frac{64\pi}{\sqrt{27\pi}}\frac{\alpha^2}{m_e^2}\sqrt{\frac{\epsilon_0}{T_b}}\phi_2(T_b),\\
+\phi_2(T_b) &= 0.448\ln(\epsilon_0/T_b),
+\end{align}
+$\alpha$ is the fine-structure constant, and $Y_p$ is the primordial helium mass fraction, whose fiducial value is 0.245.
+
+In order to include the process of reionization, which is part of the Universe's timeline in this regime, in our simulation, we need to include a couple more terms in our equation for the fractional electron density $X_e$:
+\begin{align}
+X_e &= X_e^{\rm Peebles}\nonumber\\ &+ \frac{1+f_{\rm He}}{2}\left(1+\tanh\frac{y_{\rm reion}-y}{\Delta y_{\rm reion}}\right)\\ &+ \frac{f_{\rm He}}{2}\left(1 + \tanh \frac{z_{\rm He reion}-z}{\Delta z_{\rm He reion}}\right)\nonumber
+\end{align}
+
 \section{Implementation, numerical methods and tests}
 
 \subsection{Background Cosmology}
 
-We now want to use the previously presented equations in order to compute the relevant quantities over different scale factors. The code to reproduce this simulation is available at \url{https://github.com/anaismartins/AST5220-Cosmology}. For more readable but still fast calculations, these were written in Python (\texttt{src\\python}) with equations ported from C++ (\texttt{src\\cpp}) using \texttt{ctypes} \cite{ctypes}.
+We now want to use the previously presented equations in order to compute the relevant quantities over different scale factors. The code to reproduce this simulation is available at \url{https://github.com/anaismartins/AST5220-Cosmology}. For more readable but still fast calculations, these were written in Python (\texttt{src/python}) with equations ported from C++ (\texttt{src/cpp}) using \texttt{ctypes} \citep{ctypes}.
 
 \subsubsection{Solving ODEs}
 
 In particular, we have two important quantities defined by ordinary differential equations (ODEs), the conformal time $\eta$ and the cosmic time $t$. In order to solve them, we use a fourth order Runge-Kutta method, followed by splining the results over a relevant range, which, in our case, was chosen to be from $x=\log(10^{-8})$ until today ($x=0$).
 
+\hw{3.1.1 Also good to specify how many (linear-spaced in x) point you use.}
+
 \subsubsection{Markov Chain Monte Carlo Sampling}
 
 We are interested in finding the value of the Hubble constant $H_0$, as well as the densities of the components of the Universe. To do this, we run a Markov chain Monte Carlo (MCMC) method, sampling $h = \frac{H_0}{100\text{ km s}^{-1}\text{ Mpc}^{-1}}$ (the dimensionless Hubble constant), $\Omega_M$ and $\Omega_k$ from data from supernova type IA observations \citep{Betoule_2014}.
 
+\hw{3.1.2 OmegaM0 and OmegaK0.}
+
+\subsection{Recombination History}
+
+\subsubsection{Solving for the fractional electron density in two regimes}
+
+In order to find $X_e$ using the Saha equations, we start by setting $f_e$, defined by $(2x_{\rm He++} + x_{\rm He+})\frac{Y_p}{4} + x_{\rm H+}(1-Y_p)$, to one and evolving it and the system of equations over $n$ iterations until $|f_e^{(n)} - f_e^{(n-1)}| < 10^{-10}$.
+
+Computationally, we switch from the Saha regime to the Peebles regime once $X_e$ given by Saha is smaller than 0.99. Even so, we want to show what it would look like to keep solving the Saha equations for all $x$, and for this we approximate $X_e$ as the square-root of the right hand side of the hydrogen equation (see \eqref{eq:saha_h}) once that is smaller than $10^{-5}$.
+
+We are not able to solve the Peebles ODE in the early Universe as it is numerically unstable then. It is also necessary to point out that, when solving for the $\beta$ and $\beta_2$ components of the right hand side of the Peebles equation, the exponentials contained in them become very large, thus resulting in overflow. As such, if the exponent is larger than 700, these quantities are directly set to zero. Additionally, the Peebles ODE is solved for all relevant $x$ and only afterwards is $X_e$ corrected for reionisation.
+
 \section{Results}
 
 \subsection{Background Cosmology}
+
+\hw{Plots: the plots barely show anything in the radiation dominated era. I would put the $x_min$ for the plots to be atleast -15 so that you show the full evolution.}
 
 According to our simulations, the densities of the different components of the Universe evolve as shown in Figure \ref{fig:Omegas}. This results in the scaled Hubble parameter shown in Figure \ref{fig:Hp}. The vertical lines in each of these figures represent relevant points in time, and the values for each of these are shown in Table \ref{table:times}. The analytical calculations that give the values in the table seem to agree with the curves derived from simulations in the figures, demonstrating trustworthy results.
 
@@ -207,7 +300,7 @@ According to our simulations, the densities of the different components of the U
 \end{figure}
 
 \begin{table*}[ht]
-\caption{Nonlinear Model Results}             
+\caption{Times of relevant events in Background Cosmology history.}             
 \label{table:times}      
 \centering          
 \begin{tabular}{l l l l}     % 7 columns 
@@ -233,7 +326,7 @@ It is also useful to look at the derivatives of $\mathcal H$ as well as the conf
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/ddHpddx_over_Hp.pdf}
-  \caption{Evolution of the second derivative of the scaled Hubble parameter over the scaled Hubble parameter as a function of the logarithm of the scale factor.}
+  \caption{Evolution of the second derivative of the scaled Hubble parameter over the scaled Hubble parameter as a function of the logarithm of the scale factor. \hw{Fig 4 is wrong. This is not H’’/H but seems to be just H or H’’.}}
      \label{fig:ddhpddx}
 \end{figure}
 
@@ -249,14 +342,14 @@ As a sanity check, it is also good to look at the trends in the conformal and co
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/eta_over_c.pdf}
-  \caption{Conformal time as a function of the logarithm of the scale factor.}
+  \caption{Conformal time as a function of the logarithm of the scale factor. \hw{Fig 6 Missing units on y-axis.}}
      \label{fig:eta}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/t.pdf}
-  \caption{Cosmic time as a function of the logarithm of the scale factor.}
+  \caption{Cosmic time as a function of the logarithm of the scale factor. \hw{Fig 7 Missing units on y-axis.}}
      \label{fig:t}
 \end{figure}
 
@@ -265,18 +358,24 @@ An interesting result is comparing our model to the data from \cite{Betoule_2014
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/dL.pdf}
-  \caption{Luminosity distance as a function of the logarithm of the scale factor. Our model is represented as the blue curve and the date is represented as the orange circles with their respective error bars.}
+  \caption{Luminosity distance as a function of the logarithm of the scale factor. Our model is represented as the blue curve and the date is represented as the orange circles with their respective error bars. \hw{Fig 8 Hard to see if the line goes through the data points or now. Here scaling the line and data (e.g. $d_L$ / z or similar) can help.}}
      \label{fig:dL}
 \end{figure}
 
 We now want to take a look at our MCMC fits. In Figure \ref{fig:fitting}, we can see the 1$\sigma$ prediction for the value of the densities of matter and dark energy. Our predictions agree with a flat Universe. Lastly, we have a 1$\sigma$ posterior prediction for the Hubble constant as shown in Figure \ref{fit:hist} around 70 km s$^{-1}$ Mpc$^{-1}$, which does not span to the Planck best-fit value. This might be because our model is not intricate enough yet to describe the Universe. However, it is still fairly close to the values predicted by different recent experiments.
 
+\hw{“This might be because our model is not intricate enough yet to describe the Universe. However, it is still fairly close to the values predicted by different recent experiments.”  See \url{https://cmb.wintherscoming.no/theory_background.php#tension}}
+
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/fitting.pdf}
-  \caption{1$\sigma$ prediction for the densities of matter and dark energy.}
+  \caption{1$\sigma$ prediction for the densities of matter and dark energy. \hw{Fig 9 is wrong due to the bug mentioned below (line 201). You get that OmegaLambda = 0 is allowed which it should not be.}}
      \label{fig:fitting}
 \end{figure}
+
+\hw{Describe better what is shown in the caption.}
+
+\hw{Fig 3 and 4. Here you can compare this to analytically expected values in different regimes to validate your results.}
 
 \begin{figure}[ht]
 \centering
@@ -284,6 +383,14 @@ We now want to take a look at our MCMC fits. In Figure \ref{fig:fitting}, we can
   \caption{1$\sigma$ prediction for the Hubble constant.}
      \label{fit:hist}
 \end{figure}
+
+\subsection{Recombination History}
+
+The last scattering surface is at x = -6.990913222773562, z = 1085.7134346343028, t = 11810590031016.506
+Recombination happens at x = -6.97011625341667, z = 1063.3464772606267, t = 12231033758767.107
+Recombination happens at x = -7.140341934397215, z = 1260.8597886051207, t = 9173516291000.174 according to Saha
+
+Freeze-out abundance is Xe = 0.00026736243845496357
 
 \section{Conclusions}
 
