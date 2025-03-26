@@ -38,6 +38,12 @@ class RecombinationHistory(object):
         lib.RecombinationHistory_Xe_of_x.argtypes = [c_void_p, c_double]
         lib.RecombinationHistory_Xe_of_x.restype = c_double
 
+        lib.RecombinationHistory_Xe_of_x_Saha.argtypes = [c_void_p, c_double]
+        lib.RecombinationHistory_Xe_of_x_Saha.restype = c_double
+
+        lib.RecombinationHistory_s_of_x.argtypes = [c_void_p, c_double]
+        lib.RecombinationHistory_s_of_x.restype = c_double
+
         self.obj = lib.RecombinationHistory_new(
             cosmo.obj, Yp, z_reion, delta_z_reion, z_Hereion, delta_z_Hereion, reion
         )
@@ -53,3 +59,9 @@ class RecombinationHistory(object):
 
     def Xe_of_x(self, x):
         return lib.RecombinationHistory_Xe_of_x(self.obj, x)
+
+    def Xe_of_x_Saha(self, x):
+        return lib.RecombinationHistory_Xe_of_x_Saha(self.obj, x)
+
+    def s_of_x(self, x):
+        return lib.RecombinationHistory_s_of_x(self.obj, x)

@@ -18,11 +18,15 @@ ddgddx = data[:, 9]
 
 x_lss = -6.990913222773562
 x_rec = -6.97011625341667
+x_rec_saha = -7.140341934397215
 
 plt.plot(x, Xe_Saha, label="Saha")
 plt.plot(x, Xe, label="Peebles")
-plt.axvline(x=x_lss, linestyle="--", label="LSS", color="black")
+plt.axvline(x=x_lss, linestyle="--", label="Last Scattering Surface", color="black")
 plt.axvline(x=x_rec, linestyle="-.", label="Recombination", color="black")
+plt.axvline(
+    x=x_rec_saha, linestyle=":", label="Recombination according to Saha", color="black"
+)
 plt.xlabel(r"$x$")
 plt.ylabel(r"$X_e$")
 plt.yscale("log")
@@ -41,6 +45,9 @@ plt.plot(x, ddtauddx, label=r"$\frac{d^2\tau}{dx^2}$")
 # plot vertical line at x = x_lss
 plt.axvline(x=x_lss, linestyle="--", label="Last Scattering Surface", color="black")
 plt.axvline(x=x_rec, linestyle="-.", label="Recombination", color="black")
+plt.axvline(
+    x=x_rec_saha, linestyle=":", label="Recombination according to Saha", color="black"
+)
 plt.xlabel(r"$x$")
 plt.yscale("log")
 plt.ylim(1e-8, 1e8)
@@ -56,6 +63,9 @@ plt.clf()
 plt.plot(x, g_tilde)
 plt.axvline(x=x_lss, linestyle="--", label="Last Scattering Surface", color="black")
 plt.axvline(x=x_rec, linestyle="-.", label="Recombination", color="black")
+plt.axvline(
+    x=x_rec_saha, linestyle=":", label="Recombination according to Saha", color="black"
+)
 plt.xlabel(r"$x$")
 plt.ylabel(r"$\tilde{g}$")
 plt.legend()
@@ -69,6 +79,9 @@ plt.clf()
 plt.plot(x, dgdx)
 plt.axvline(x=x_lss, linestyle="--", label="Last Scattering Surface", color="black")
 plt.axvline(x=x_rec, linestyle="-.", label="Recombination", color="black")
+plt.axvline(
+    x=x_rec_saha, linestyle=":", label="Recombination according to Saha", color="black"
+)
 plt.xlabel(r"$x$")
 plt.ylabel(r"$\frac{d\tilde{g}}{dx}$")
 plt.legend()

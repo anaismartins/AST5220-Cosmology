@@ -485,6 +485,47 @@ double RecombinationHistory::get_Yp() const
   return Yp;
 }
 
+double RecombinationHistory::s_of_x(double x)
+{
+  ODESolver s_ode;
+
+  double const c = Constants.c;
+
+  double const OmegaGamma0 = cosmo->get_OmegaGamma(0.0);
+  double const OmegaB0 = cosmo->get_OmegaB(0.0);
+
+  ODEFunction dsdx = [&](double x, const double *s, double *dsdx)
+  {
+    double a = exp(x);
+
+    double const Hp = cosmo->Hp_of_x(x);
+
+    double const R = 4. * OmegaGamma0 / (3. * OmegaB0 * a);
+    double const c_s = c * sqrt(R / (3. * (1. + R)));
+
+    dsdx[0] = c_s / Hp;
+    return GSL_SUCCESS;
+  };
+
+  double const a_ini = exp(x_start);
+  double const R_ini = 4. * OmegaGamma0 / (3. * OmegaB0 * a_ini);
+  double const c_s_ini = c * sqrt(R_ini / (3. * (1. + R_ini)));
+  double const Hp_ini = cosmo->Hp_of_x(x_start);
+
+  double s_ini = c_s_ini / Hp_ini;
+  Vector s_ic{s_ini};
+
+  Vector x_array = Utils::linspace(x_start, x_end, npts_rec_arrays);
+
+  s_ode.solve(dsdx, x_array, s_ic);
+
+  auto s_array = s_ode.get_data_by_component(0);
+
+  s_of_x_spline.create(x_array, s_array, "s_of_x");
+
+  return s_of_x_spline(x);
+}
+
 //====================================================
 // Print some useful info about the class
 //====================================================
@@ -551,5 +592,15 @@ extern "C"
   double RecombinationHistory_Xe_of_x(RecombinationHistory *rec, double x)
   {
     return rec->Xe_of_x(x);
+  }
+
+  double RecombinationHistory_Xe_of_x_Saha(RecombinationHistory *rec, double x)
+  {
+    return rec->Xe_of_x_Saha(x);
+  }
+
+  double RecombinationHistory_s_of_x(RecombinationHistory *rec, double x)
+  {
+    return rec->s_of_x(x);
   }
 }

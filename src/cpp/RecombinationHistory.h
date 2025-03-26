@@ -59,6 +59,7 @@ private:
   Spline Xe_of_x_spline_saha{"Xe_Saha"};
   Spline tau_of_x_spline{"tau"};
   Spline g_tilde_of_x_spline{"g"};
+  Spline s_of_x_spline{"s"};
 
 public:
   // Construtors
@@ -91,6 +92,7 @@ public:
   double Xe_of_x_Saha(double x) const;
   double ne_of_x(double x) const;
   double get_Yp() const;
+  double s_of_x(double x);
 };
 
 extern "C"
@@ -100,6 +102,8 @@ extern "C"
   double RecombinationHistory_tau_of_x(RecombinationHistory *rec, double x);
   double RecombinationHistory_g_tilde_of_x(RecombinationHistory *rec, double x);
   double RecombinationHistory_Xe_of_x(RecombinationHistory *rec, double x);
+  double RecombinationHistory_Xe_of_x_Saha(RecombinationHistory *rec, double x);
+  double RecombinationHistory_s_of_x(RecombinationHistory *rec, double x);
 }
 
 #endif
