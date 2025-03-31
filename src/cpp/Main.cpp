@@ -56,7 +56,7 @@ int main(int argc, char **argv)
   //=========================================================================
 
   // Solve the recombination history
-  RecombinationHistory rec(&cosmo, Yp, z_reion, delta_z_reion, z_Hereion, delta_z_Hereion, false);
+  RecombinationHistory rec(&cosmo, Yp, z_reion, delta_z_reion, z_Hereion, delta_z_Hereion, true);
   rec.solve();
   rec.info();
 
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
   std::cout << "Finsihed RecombinationHistory" << std::endl;
 
   // Remove when module is completed
-  return 0;
+  // return 0;
 
   //=========================================================================
   // Module III
@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 
   // Output perturbation quantities
   double kvalue = 0.01 / Constants.Mpc;
-  pert.output(kvalue, "perturbations_k0.01.txt");
+  pert.output(kvalue, "output/data.perturbations_k0.01.txt");
 
   // Remove when module is completed
   return 0;

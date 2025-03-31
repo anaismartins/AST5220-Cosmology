@@ -1,3 +1,4 @@
+import astropy.units as u
 import numpy as np
 from BackgroundCosmology import BackgroundCosmology
 from RecombinationHistory import RecombinationHistory
@@ -44,13 +45,16 @@ for i in range(len(x)):
     tau[i] = rec.tau_of_x(x[i])
     if tau[i] < 1:
         x_lss = x[i]
+        i_lss = i
         break
 
 # x_lss = x[np.argmax(g_tilde)]
 z_lss = cosmo.get_z(x_lss)
-t_lss = cosmo.get_cosmic_time(x_lss)
+t_lss = cosmo.get_cosmic_time(x_lss) * u.s
 
-print(f"The last scattering surface is at x = {x_lss}, z = {z_lss}, t = {t_lss}")
+print(
+    f"The last scattering surface is at x = {x_lss}, z = {z_lss}, t = {t_lss.to(u.Myr)}"
+)
 
 # recombination
 # find when Xe = 0.1
@@ -69,16 +73,16 @@ for i in range(len(x)):
         break
 
 z_recombination = cosmo.get_z(x_recombination)
-t_recombination = cosmo.get_cosmic_time(x_recombination)
+t_recombination = cosmo.get_cosmic_time(x_recombination) * u.s
 
 z_recombination_Saha = cosmo.get_z(x_recombination_Saha)
-t_recombination_Saha = cosmo.get_cosmic_time(x_recombination_Saha)
+t_recombination_Saha = cosmo.get_cosmic_time(x_recombination_Saha) * u.s
 
 print(
-    f"Recombination happens at x = {x_recombination}, z = {z_recombination}, t = {t_recombination}"
+    f"Recombination happens at x = {x_recombination}, z = {z_recombination}, t = {t_recombination.to(u.Myr)}"
 )
 print(
-    f"Recombination happens at x = {x_recombination_Saha}, z = {z_recombination_Saha}, t = {t_recombination_Saha} according to Saha"
+    f"Recombination happens at x = {x_recombination_Saha}, z = {z_recombination_Saha}, t = {t_recombination_Saha.to(u.Myr)}according to Saha"
 )
 
 # freeze-out abundance
@@ -87,6 +91,18 @@ Xe_freeze_out = rec.Xe_of_x(0.0)
 print(f"Freeze-out abundance is Xe = {Xe_freeze_out}")
 
 # sound horizon
-r_s = rec.s_of_x(x_lss)
+r_s = rec.s_of_x(x_lss) * u.m
 
-print(f"Sound horizon at last scattering surface is r_s = {r_s}")
+print(f"Sound horizon at last scattering surface is r_s = {r_s.to(u.Mpc)}")
+
+# time of reionization
+for i in range(i_lss, len(x)):
+    # print(f"{x[i]}: {rec.Xe_of_x(x[i])}")
+    if rec.Xe_of_x(x[i]) > 0.5:
+        x_reion = x[i]
+        break
+
+z_reion = cosmo.get_z(x_reion)
+t_reion = cosmo.get_cosmic_time(x_reion) * u.s
+
+print(f"Reionization happens at x = {x_reion}, z = {z_reion}, t = {t_reion.to(u.Myr)}")
