@@ -73,24 +73,6 @@ void Perturbations::integrate_perturbations()
     double x_end_tight = get_tight_coupling_time(k);
     printf("x_end_tight: %f\n", x_end_tight);
 
-    //===================================================================
-    // TODO: Tight coupling integration
-    // Remember to implement the routines:
-    // set_ic : The IC at the start
-    // rhs_tight_coupling_ode : The dydx for our coupled ODE system
-    //===================================================================
-
-    // Set up initial conditions in the tight coupling regime
-    auto y_tight_coupling_ini = set_ic(x_start, k);
-
-    // The tight coupling ODE system
-    ODEFunction dydx_tight_coupling = [&](double x, const double *y, double *dydx)
-    {
-      return rhs_tight_coupling_ode(x, k, y, dydx);
-    };
-
-    ODESolver ode;
-
     // Integrate from x_start -> x_end_tight
     double i_tc;
     for (int ix = 0; ix < n_x; ix++)
@@ -102,16 +84,28 @@ void Perturbations::integrate_perturbations()
       }
     }
 
+    // Set up initial conditions in the tight coupling regime
+    auto y_tight_coupling_ini = set_ic(x_start, k);
+
+    // The tight coupling ODE system
+    ODEFunction dydx_tight_coupling = [&](double x, const double *y, double *dydx)
+    {
+      return rhs_tight_coupling_ode(x, k, y, dydx);
+    };
+
+    ODESolver ode_tc;
+
     printf("i_tc: %f\n", i_tc);
 
     Vector x_array_tc(x_array.begin(), x_array.begin() + i_tc);
     Vector y_ic{y_tight_coupling_ini};
 
-    ode.solve(dydx_tight_coupling, x_array_tc, y_ic);
-    auto y_tight_coupling = ode.get_data();
+    ode_tc.solve(dydx_tight_coupling, x_array_tc, y_ic);
+    auto y_tight_coupling = ode_tc.get_data();
 
     for (int ix = 0; ix < i_tc; ix++)
     {
+      // printf("ix: %d, x_array[ix]: %f\n", ix, x_array[ix]);
       double a = exp(x_array[ix]);
 
       delta_cdm[ix + n_x * ik] = y_tight_coupling[ix][Constants.ind_deltacdm_tc];
@@ -130,6 +124,8 @@ void Perturbations::integrate_perturbations()
       }
     }
 
+    printf("Finished setting the tight coupling ODE system\n");
+
     //====i===============================================================
     // TODO: Full equation integration
     // Remember to implement the routines:
@@ -137,9 +133,18 @@ void Perturbations::integrate_perturbations()
     // rhs_full_ode : The dydx for our coupled ODE system
     //===================================================================
 
+    ODESolver ode_full;
+
+    printf("Set up the full ODE system\n");
+
     // Set up initial conditions (y_tight_coupling is the solution at the end of tight coupling)
-    Vector y_tc = ode.get_data_by_xindex(i_tc - 1);
+    Vector y_tc = ode_tc.get_data_by_xindex(i_tc - 1);
+
+    printf("y_tc.size(): %d\n", y_tc.size());
+
     auto y_full_ini = set_ic_after_tight_coupling(y_tc, x_end_tight, k);
+
+    printf("y_full_ini.size(): %d\n", y_full_ini.size());
 
     // The full ODE system
     ODEFunction dydx_full = [&](double x, const double *y, double *dydx)
@@ -147,58 +152,45 @@ void Perturbations::integrate_perturbations()
       return rhs_full_ode(x, k, y, dydx);
     };
 
+    printf("Set the full ODE system\n");
+
     // Integrate from x_end_tight -> x_end
     Vector x_array_full(x_array.begin() + i_tc, x_array.end());
     Vector y_ic_full{y_full_ini};
 
-    ode.solve(dydx_full, x_array_full, y_ic_full);
-    auto y_full = ode.get_data();
+    printf("x_array_full.size(): %d\n", x_array_full.size());
+
+    ode_full.solve(dydx_full, x_array_full, y_ic_full);
+    auto y_full = ode_full.get_data();
+
+    printf("y_full.size(): %d\n", y_full.size());
 
     for (int ix = i_tc; ix < n_x; ix++)
     {
+      // printf("ix: %d, x_array[ix]: %f\n", ix, x_array[ix]);
       double a = exp(x_array[ix]);
 
-      delta_cdm[ix + n_x * ik] = y_full[ix][Constants.ind_deltacdm];
-      delta_b[ix + n_x * ik] = y_full[ix][Constants.ind_deltab];
-      v_cdm[ix + n_x * ik] = y_full[ix][Constants.ind_vcdm];
-      v_b[ix + n_x * ik] = y_full[ix][Constants.ind_vb];
-      Phi[ix + n_x * ik] = y_full[ix][Constants.ind_Phi];
+      delta_cdm[ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_deltacdm];
+      delta_b[ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_deltab];
+      v_cdm[ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_vcdm];
+      v_b[ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_vb];
+      Phi[ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_Phi];
       Psi[ix + n_x * ik] = -Phi[ix + n_x * ik] - 12. * H0 * H0 / (c * c * k * k * a * a) * (Omega_gamma0 * Theta[2][ix + n_x * ik] + Omega_nu0 * Nu[2][ix + n_x * ik]);
       for (int l = 0; l < Constants.n_ell_theta; l++)
       {
-        Theta[l][ix + n_x * ik] = y_full[ix][Constants.ind_start_theta + l];
+        Theta[l][ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_start_theta + l];
       }
       for (int l = 0; l < Constants.n_ell_thetap; l++)
       {
-        Theta_p[l][ix + n_x * ik] = y_full[ix][Constants.ind_start_thetap + l];
+        Theta_p[l][ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_start_thetap + l];
       }
       for (int l = 0; l < Constants.n_ell_neutrinos; l++)
       {
-        Nu[l][ix + n_x * ik] = y_full[ix][Constants.ind_start_nu + l];
+        Nu[l][ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_start_nu + l];
       }
     }
 
-    //===================================================================
-    // TODO: remember to store the data found from integrating so we can
-    // spline it below
-    //
-    // To compute a 2D spline of a function f(x,k) the data must be given
-    // to the spline routine as a 1D array f_array with the points f(ix, ik)
-    // stored as f_array[ix + n_x * ik]
-    // Example:
-    // Vector x_array(n_x);
-    // Vector k_array(n_k);
-    // Vector f(n_x * n_k);
-
-    // We can now use the spline as f_spline(x, k)
-    //
-    // NB: If you use Theta_spline then you have to allocate it first,
-    // before using it e.g.
-    // Theta_spline = std::vector<Spline2D>(n_ell_theta);
-    //
-    //===================================================================
-    //...
-    //...
+    printf("Finished setting the full ODE system\n");
   }
 
   Utils::EndTiming("integrateperturbation");
@@ -207,6 +199,33 @@ void Perturbations::integrate_perturbations()
   // TODO: Make all splines needed: Theta0,Theta1,Theta2,Phi,Psi,...
   //=============================================================================
   delta_cdm_spline.create(x_array, k_array, delta_cdm, "delta_cdm_spline");
+  printf("Made delta_cdm_spline\n");
+  delta_b_spline.create(x_array, k_array, delta_b, "delta_b_spline");
+  v_cdm_spline.create(x_array, k_array, v_cdm, "v_cdm_spline");
+  v_b_spline.create(x_array, k_array, v_b, "v_b_spline");
+  Phi_spline.create(x_array, k_array, Phi, "Phi_spline");
+  Psi_spline.create(x_array, k_array, Psi, "Psi_spline");
+  printf("Made all the scalar splines\n");
+
+  Theta_spline = std::vector<Spline2D>(Constants.n_ell_theta);
+  Theta_p_spline = std::vector<Spline2D>(Constants.n_ell_thetap);
+  Nu_spline = std::vector<Spline2D>(Constants.n_ell_neutrinos);
+
+  for (int l = 0; l < Constants.n_ell_theta; l++)
+  {
+    Theta_spline[l].create(x_array, k_array, Theta[l], "Theta_spline");
+  }
+  printf("Made all the Theta_spline\n");
+  for (int l = 0; l < Constants.n_ell_thetap; l++)
+  {
+    Theta_p_spline[l].create(x_array, k_array, Theta_p[l], "Theta_p_spline");
+  }
+  for (int l = 0; l < Constants.n_ell_neutrinos; l++)
+  {
+    Nu_spline[l].create(x_array, k_array, Nu[l], "Nu_spline");
+  }
+
+  printf("Finished setting the splines\n");
 }
 
 //====================================================
