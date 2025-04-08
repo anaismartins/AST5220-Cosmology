@@ -227,3 +227,16 @@ plt.legend()
 plt.savefig(
     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Omegas.pdf"
 )
+
+
+# plot eta Hp / c
+plt.plot(x, eta * Hp / const.c)
+plt.xlabel(r"$x$")
+plt.ylabel(r"$\eta \mathcal{H}/c$")
+plt.xscale("log")
+plt.xlim(x_start, x_end)
+plt.yscale("log")
+# plt.ylim(1e-3, 1e2)
+plt.savefig(
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/etaHp_over_c.pdf"
+)

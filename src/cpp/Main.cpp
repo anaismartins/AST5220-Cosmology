@@ -79,7 +79,8 @@ int main(int argc, char **argv)
 
   // Output perturbation quantities
   double kvalue = 0.01 / Constants.Mpc;
-  pert.output(kvalue, "output/data.perturbations_k0.01.txt");
+  std::cout << "kvalue = " << kvalue << std::endl;
+  pert.output(kvalue, "output/data/perturbations_k0.01.txt");
 
   // Remove when module is completed
   return 0;

@@ -170,13 +170,12 @@ namespace Utils
     return res;
   }
 
-  // Logspace function taken from https://quick-bench.com/q/Hs39BWQf5kr5Gjnv6zQkLXMrsDw
   std::vector<double> logspace(double xminpow, double xmaxpow, int num)
   {
-    std::vector<double> logspace;
+    std::vector<double> logspace(num);
     for (int i = 0; i < num; i++)
     {
-      logspace.push_back(pow(10, i * (xmaxpow - xminpow) / (num - 1)));
+      logspace[i] = pow(10, xminpow + (num - (num - i)) * (xmaxpow - xminpow) / (num - 1));
     }
     return logspace;
   }
@@ -254,7 +253,7 @@ FUNS(cos);
 FUNS(sin);
 FUNS(tan);
 FUNS(fabs);
-FUNS(atan)
+FUNS(atan);
 #undef FUNS
 std::vector<double> pow(const std::vector<double> &x, double n)
 {

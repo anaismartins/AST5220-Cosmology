@@ -50,7 +50,7 @@ void BackgroundCosmology::solve()
     return GSL_SUCCESS;
   };
 
-  double etaini = 0.0;
+  double etaini = Constants.c / Hp_of_x(x_start);
   Vector eta_ic{etaini};
 
   ode.solve(detadx, x_array, eta_ic);

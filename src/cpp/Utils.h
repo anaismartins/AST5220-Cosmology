@@ -50,12 +50,12 @@ extern struct ConstantsAndUnits
 
   // Min and max x-value
   // const double x_start = log(1e-8);
-  const double x_start = -12.0;
+  const double x_start = -15.0;
   const double x_end = 0.0;
 
   // Include polarization and/or neutrinos?
-  const bool polarization = true;
-  const bool neutrinos = true;
+  const bool polarization = false;
+  const bool neutrinos = false;
 
   // For integration of perturbations (number of equations and positions in arrays)
   const int n_scalars = 5;
