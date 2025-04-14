@@ -47,7 +47,6 @@ void RecombinationHistory::solve_number_density_electrons()
   double x_change = 0.0;
   for (int i = 0; i < npts_rec_arrays; i++)
   {
-    printf("i = %d\n", i);
 
     double Xe_current;
     double ne_current;
@@ -119,8 +118,6 @@ void RecombinationHistory::solve_number_density_electrons()
     }
   }
 
-  printf("Reionization flag: %s\n", reion ? "true" : "false");
-
   if (reion)
   {
     for (int i = 0; i < npts_rec_arrays; i++)
@@ -143,8 +140,6 @@ void RecombinationHistory::solve_number_density_electrons()
 
         // Introduce Helium reionization
         Xe = Xe + dXe_He;
-
-        // std::cout << f_He << " " << z << " " << dXe_1 << " " << dXe_2 << " " << std::endl;
 
         // Store the result
         Xe_arr[i] = Xe;
@@ -191,9 +186,6 @@ void RecombinationHistory::solve_number_density_electrons()
 //====================================================
 std::pair<double, double> RecombinationHistory::electron_fraction_from_saha_equation(double x) const
 {
-  // increase print precision for the whole script
-  std::cout.precision(15);
-
   // Current value of a and x
   const double a = exp(x);
 
@@ -385,8 +377,6 @@ void RecombinationHistory::solve_for_optical_depth_tau()
   // tau_of_x_spline.create(x_array_reversed, tau_array, "tau");
   tau_of_x_spline.create(x_array, tau_array, "tau");
 
-  printf("Made tau spline\n");
-
   // Compute visibility function
   Vector g_tilde_array(npts);
   for (int i = 0; i < npts; i++)
@@ -560,11 +550,9 @@ void RecombinationHistory::output(const std::string filename) const
     fp << g_tilde_of_x(x) << " ";
     fp << dgdx_tilde_of_x(x) << " ";
     fp << ddgddx_tilde_of_x(x) << " ";
-    // std::cout << "Finished writing data at x = " << x << "\n";
     fp << "\n";
   };
   std::for_each(x_array.begin(), x_array.end(), print_data);
-  std::cout << "Finished writing data to file " << filename << "\n";
 }
 
 extern "C"

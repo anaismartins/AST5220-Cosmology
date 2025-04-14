@@ -66,9 +66,6 @@ clean:
 	rm -rf $(TARGETS) $(BUILD_DIR)*.o
 
 python-lib: $(OBJS)
-	${CC} -shared -fPIC -o $(BIN_DIR)libcmb.so $(SRC_DIR)BackgroundCosmology.cpp $(SRC_DIR)ODESolver.cpp $(SRC_DIR)Utils.cpp $(SRC_DIR)Spline.cpp $(LIBS)
-
-lib-rec: $(OBJS)
-	${CC} -shared -fPIC -o $(BIN_DIR)librec.so $(SRC_DIR)RecombinationHistory.cpp $(SRC_DIR)BackgroundCosmology.cpp $(SRC_DIR)ODESolver.cpp $(SRC_DIR)Utils.cpp $(SRC_DIR)Spline.cpp $(LIBS)
+	${CC} -shared -fPIC -o $(BIN_DIR)libcmb.so $(SRC_DIR)Perturbations.cpp $(SRC_DIR)RecombinationHistory.cpp $(SRC_DIR)BackgroundCosmology.cpp $(SRC_DIR)ODESolver.cpp $(SRC_DIR)Utils.cpp $(SRC_DIR)Spline.cpp $(LIBS)
 
 .PRECIOUS: $(BUILD_DIR)%.o

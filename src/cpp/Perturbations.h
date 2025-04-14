@@ -133,4 +133,19 @@ public:
   double get_Source_E(const double x, const double k) const;
 };
 
+extern "C"
+{
+  Perturbations *Perturbations_new(BackgroundCosmology *cosmo, RecombinationHistory *rec);
+  void Perturbations_solve(Perturbations *pert);
+  double Perturbations_get_delta_cdm(Perturbations *pert, const double x, const double k);
+  double Perturbations_get_delta_b(Perturbations *pert, const double x, const double k);
+  double Perturbations_get_Theta(Perturbations *pert, const double x, const double k, const double ell);
+  double Perturbations_get_Nu(Perturbations *pert, const double x, const double k, const double ell);
+  double Perturbations_get_v_cdm(Perturbations *pert, const double x, const double k);
+  double Perturbations_get_v_b(Perturbations *pert, const double x, const double k);
+  double Perturbations_get_Phi(Perturbations *pert, const double x, const double k);
+  double Perturbations_get_Psi(Perturbations *pert, const double x, const double k);
+  double Perturbations_get_Theta_p(Perturbations *pert, const double x, const double k, const double ell);
+}
+
 #endif

@@ -1,7 +1,7 @@
 from ctypes import c_bool, c_double, c_void_p, cdll
 
 lib = cdll.LoadLibrary(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/bin/librec.so"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/bin/libcmb.so"
 )
 
 
@@ -20,20 +20,14 @@ class RecombinationHistory(object):
         ]
         lib.RecombinationHistory_new.restype = c_void_p
 
-        print("Yp = ", Yp)
-
         lib.RecombinationHistory_solve.argtypes = [c_void_p]
         lib.RecombinationHistory_solve.restype = c_void_p
-
-        print("z_reion = ", z_reion)
 
         lib.RecombinationHistory_tau_of_x.argtypes = [c_void_p, c_double]
         lib.RecombinationHistory_tau_of_x.restype = c_double
 
         lib.RecombinationHistory_g_tilde_of_x.argtypes = [c_void_p, c_double]
         lib.RecombinationHistory_g_tilde_of_x.restype = c_double
-
-        print("delta_z_reion = ", delta_z_reion)
 
         lib.RecombinationHistory_Xe_of_x.argtypes = [c_void_p, c_double]
         lib.RecombinationHistory_Xe_of_x.restype = c_double

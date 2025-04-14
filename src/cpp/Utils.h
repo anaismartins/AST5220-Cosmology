@@ -137,4 +137,9 @@ FUNS(fabs);
 FUNS(atan);
 #undef FUNS
 
+extern "C"
+{
+  const double Utils_Mpc = Constants.Mpc;
+}
+
 #endif

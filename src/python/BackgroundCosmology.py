@@ -1,7 +1,7 @@
 from ctypes import c_double, c_void_p, cdll
 
 lib = cdll.LoadLibrary(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/bin/librec.so"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/bin/libcmb.so"
 )
 
 
