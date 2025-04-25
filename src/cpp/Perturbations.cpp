@@ -177,7 +177,6 @@ void Perturbations::integrate_perturbations()
       v_cdm[ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_vcdm];
       v_b[ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_vb];
       Phi[ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_Phi];
-      Psi[ix + n_x * ik] = -Phi[ix + n_x * ik] - 12. * H0 * H0 / (c * c * k * k * a * a) * (Omega_gamma0 * Theta[2][ix + n_x * ik] + Omega_nu0 * Nu[2][ix + n_x * ik]);
       for (int l = 0; l < Constants.n_ell_theta; l++)
       {
         Theta[l][ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_start_theta + l];
@@ -191,6 +190,7 @@ void Perturbations::integrate_perturbations()
       {
         Nu[l][ix + n_x * ik] = y_full[ix - i_tc][Constants.ind_start_nu + l];
       }
+      Psi[ix + n_x * ik] = -Phi[ix + n_x * ik] - 12. * H0 * H0 / (c * c * k * k * a * a) * (Omega_gamma0 * Theta[2][ix + n_x * ik] + Omega_nu0 * Nu[2][ix + n_x * ik]);
     }
   }
 
@@ -334,21 +334,21 @@ Vector Perturbations::set_ic_after_tight_coupling(
   const double *Nu_tc = &y_tc[Constants.ind_start_nu_tc];
 
   // References to the quantities we are going to set
-  double &delta_cdm = y[Constants.ind_deltacdm_tc];
-  double &delta_b = y[Constants.ind_deltab_tc];
-  double &v_cdm = y[Constants.ind_vcdm_tc];
-  double &v_b = y[Constants.ind_vb_tc];
-  double &Phi = y[Constants.ind_Phi_tc];
-  double *Theta = &y[Constants.ind_start_theta_tc];
-  double *Theta_p = &y[Constants.ind_start_thetap_tc];
-  double *Nu = &y[Constants.ind_start_nu_tc];
+  double &delta_cdm = y[Constants.ind_deltacdm];
+  double &delta_b = y[Constants.ind_deltab];
+  double &v_cdm = y[Constants.ind_vcdm];
+  double &v_b = y[Constants.ind_vb];
+  double &Phi = y[Constants.ind_Phi];
+  double *Theta = &y[Constants.ind_start_theta];
+  double *Theta_p = &y[Constants.ind_start_thetap];
+  double *Nu = &y[Constants.ind_start_nu];
 
   double Hp = cosmo->Hp_of_x(x);
   double dtaudx = rec->dtaudx_of_x(x);
 
-  double f_nu = Omega_nu0 / (Omega_gamma0 + Omega_nu0);
+  double a = exp(x);
 
-  const double Psi = -1. / (3. / 2. + 2. * f_nu / 5.);
+  double f_nu = Omega_nu0 / (Omega_gamma0 + Omega_nu0);
 
   // SET: Scalar quantities (Gravitational potental, baryons and CDM)
   Phi = Phi_tc;
@@ -390,6 +390,8 @@ Vector Perturbations::set_ic_after_tight_coupling(
       Nu[l] = Nu_tc[l];
     }
   }
+
+  double Psi = -Phi - 12. * H0 * H0 / (c * c * k * k * a * a) * (Omega_gamma0 * Theta[2] + Omega_nu0 * Nu[2]);
 
   // check for nans
   for (int i = 0; i < y.size(); i++)

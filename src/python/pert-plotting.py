@@ -193,6 +193,7 @@ plt.grid()
 plt.savefig(
     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Theta2_Nu2.png"
 )
+# plt.show()
 
 # get gravitational potentials
 Phi = np.zeros((3, npts))

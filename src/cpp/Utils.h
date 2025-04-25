@@ -50,7 +50,7 @@ extern struct ConstantsAndUnits
 
   // Min and max x-value
   // const double x_start = log(1e-8);
-  const double x_start = -15.0;
+  const double x_start = -20.0;
   const double x_end = 0.0;
 
   // Include polarization and/or neutrinos?
