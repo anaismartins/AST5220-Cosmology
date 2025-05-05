@@ -28,6 +28,9 @@
 \newcommand{\hw}[1]{\textcolor{red}{HW: #1}}
 \newcommand{\todo}[1]{\textcolor{green}{TODO: #1}}
 
+\usepackage{amsmath}
+\usepackage{subfigure}
+
 \begin{document} 
 
 
@@ -54,15 +57,15 @@
   % {} leave it empty if necessary  
    {}
   % aims heading (mandatory)
-   {We have simulated the large scales of the universe, as well as the recombination and reionisation processes.}
+   {We have simulated the large scales of the universe, as well as the recombination and reionisation processes. We then perturbed the initial conditions of the Universe and propagated it through time.}
   % methods heading (mandatory)
-   {We use a Markov chain Monte Carlo to predict the densities of the different components of the Universe, as well as solving ordinary differential equations using a fourth-order Runge-Kutta method.}
+   {We use a Markov chain Monte Carlo to predict the densities of the different components of the Universe, as well as solving ordinary differential equations using a fourth-order Runge-Kutta method. For higher-order ODEs, we use line-of-sight integration.}
   % results heading (mandatory)
-   {We find the times of radiation-matter and matter-dark energy equality to be $x=-8.1319$ and $x=-0.25582$. Recombination happens at $x=-7.0$, while recombination happens at $x=-2.2$.}
+   {We find the times of radiation-matter and matter-dark energy equality to be $x=-8.1319$ and $x=-0.25582$. Recombination happens at $x=-7.0$, while reionization happens at $x=-2.2$. Perturbations have an oscillatory behaviour that is dampened by the expansion of the Universe.}
   % conclusions heading (optional), leave it empty if necessary 
    {}
 
-   \keywords{CMB, Hubble constant, MCMC, Recombination, Reionisation}
+   \keywords{CMB, Hubble constant, MCMC, Recombination, Reionisation, Linear perturbation theory}
 
    \maketitle
 %
@@ -87,6 +90,10 @@ A significant event in the history of the Universe is recombination. In this pro
 \includegraphics[width=\textwidth]{report/figures/eso1620a.jpg}
 \end{figure*}
 
+\subsection{Perturbations}
+
+However, life is never that simple, and the Universe is not simply smooth. As such, we need to introduce perturbation theory by adding small perturbations to the initial conditions of our parameters and observing how they evolve until today.
+
 \section{Theoretical Background}
 
 \subsection{Background Cosmology}
@@ -97,7 +104,7 @@ ds^2 = -dt^2 + a^2(t)(dx^2 + dy^2 + dz^2),
 \end{equation}
 where $a(t)$ is the scale factor of the Universe, a measure for the rate of its expansion.
 
-We are interested in learning about the densities of the different components of the Universe at different points in time, from the Cosmic Microwave Background until the present day. The $\Lambda$CDM model assumes that the Universe is composed of matter (baryons\footnote{Baryons in this context refers to all "normal" matter, i.e. quarks, leptons (not including neutrinos for our purposes) and combinations of them.} and cold, dark matter), radiation (photons and neutrinos) and dark energy. Another important notion for our model is that of curvature, which we already implicitly assumed to be 0 in the above equation, i.e. we are assuming a flat Universe. These components come together in the Friedman equation, which relates their density evolution to the expansion of the Universe:
+We are interested in learning about the densities of the different components of the Universe at different points in time, from the Cosmic Microwave Background until the present day. The $\Lambda$CDM model assumes that the Universe is composed of matter (baryons\footnote{Baryons in this context refers to all "normal" matter, i.e. quarks, leptons (not including neutrinos for our purposes) and combinations of them.} and cold, dark matter (CDM)), radiation (photons and neutrinos) and dark energy. Another important notion for our model is that of curvature, which we already implicitly assumed to be 0 in the above equation, i.e. we are assuming a flat Universe. These components come together in the Friedman equation, which relates their density evolution to the expansion of the Universe:
 \begin{equation}
 H(a) = H_0 \sqrt{\Omega_{M0}a^{-3} + \Omega_{R0}a^{-4} + \Omega_{k 0} a^{-2} + \Omega_{\Lambda 0}},
 \end{equation}
@@ -257,6 +264,110 @@ Another interesting quantity to look at is the sound horizon -- the distance a s
     s(x) = \int_0^{a} \frac{c_s dt}{a} = \int_{-\infty}^{x} \frac{c_s dx}{\mathcal{H}} \to \frac{ds(x)}{dx} = \frac{c_s}{\mathcal{H}}.
 \end{equation}
 
+\hw{Theory is fine. Your equations have no c,hbar,$k_b$ etc in this section (while for background cosmology you do include this).}
+
+\subsection{Perturbations}
+
+In order to perturb our observables, we must outline how they will evolve with time and what their initial conditions look like. We start by perturbing the metric:
+\begin{equation}
+g_{\mu\nu} = \overline{g}_{\mu\nu} + \delta g_{\mu\nu},
+\end{equation}
+and then propagating this to the Einstein-Boltzmann equations for photons, CDM, baryons and massless neutrinos.
+
+At early times, optical depth is very large, meaning photons are not able to travel freely. This regime is called "tight coupling", as photons and baryons are tightly coupled together. Because of this, we are only able to observe large scale quantities, so we only care to set conditions for low multipoles, namely, the photon monopole $\Theta_0$, which sets the mean temperature of the medium, and the photon dipole $\Theta_1$, relating to the fluid velocity due to the Doppler effect. The relevant equations for this regime are then given by
+\begin{alignat*}{3}
+&\Theta^\prime_0 =&& -\frac{ck}{\mathcal{H}} \Theta_1 - \Phi^\prime,\\
+&\Theta^\prime_1 =&& \frac{1}{3} (q - v_b^\prime)\\
+&\mathcal{N}^\prime_0 =&& -\frac{ck}{\mathcal{H}} \mathcal{N}_1 - \Phi^\prime, \\
+&\mathcal{N}^\prime_1 =&&  \frac{ck}{3\mathcal{H}} \mathcal{N}_0 - \frac{2ck}{3\mathcal{H}}\mathcal{N}_2 + 
+\frac{ck}{3\mathcal{H}}\Psi,\\
+&\mathcal{N}^\prime_\ell =&& \frac{\ell ck}{(2\ell+1)\mathcal{H}} \mathcal{N}_{\ell-1} -
+\frac{(\ell+1)ck}{(2\ell+1)\mathcal{H}}\mathcal{N}_{\ell+1},\quad 2 \le \ell <
+\ell_{\textrm{max},\nu},\\
+&\mathcal{N}_{\ell_{\textrm{max},\nu}}^\prime =&& \frac{ck}{\mathcal{H}}
+\mathcal{N}_{\ell_{\textrm{max},\nu}-1}-c\frac{\ell+1}{\mathcal{H}\eta(x)}\mathcal{N}_{\ell_{\textrm{max},\nu}},\\
+&\delta_{\rm CDM}^\prime =&& \frac{ck}{\mathcal{H}} v_{\rm CDM} - 3\Phi^\prime,\\
+&v_{\rm CDM}^\prime =&& -v_{\rm CDM} -\frac{ck}{\mathcal{H}} \Psi,\\
+&\delta_b^\prime =&& \frac{ck}{\mathcal{H}}v_b -3\Phi^\prime,\\
+&v_b^\prime =&& \frac{1}{1+R} \left[-v_b - \frac{ck}{\mathcal{H}}\Psi + R(q +
+\frac{ck}{\mathcal{H}}(-\Theta_0 + 2\Theta_2) - \frac{ck}{\mathcal{H}}\Psi)\right],\\
+&\Phi^\prime =&& \Psi - \frac{c^2k^2}{3\mathcal{H}^2} \Phi + \frac{H_0^2}{2\mathcal{H}^2}\Bigl[\Omega_{\rm CDM 0} a^{-1} \delta_{\rm CDM} + \Omega_{b 0} a^{-1} \delta_b + \\& &&4\Omega_{\gamma 0}
+a^{-2}\Theta_0 + 4\Omega_{\nu 0}a^{-2}\mathcal{N}_0\Bigr],\\
+&\Psi =&& -\Phi - \frac{12H_0^2}{c^2k^2a^2}\Omega_{\nu 0}\mathcal{N}_2,
+\end{alignat*}
+where
+\begin{align*}
+    q = \frac{1}{{(1+R)\tau^\prime + \frac{\mathcal{H}^\prime}{\mathcal{H}} -
+1}}\Bigl[&-[(1-R)\tau^\prime + \\&(1+R)\tau^{\prime\prime}](3\Theta_1+v_b) -
+\frac{ck}{\mathcal{H}}\Psi +\\& (1-\frac{\mathcal{H}^\prime}{\mathcal{H}})\frac{ck}{\mathcal{H}}(-\Theta_0 +
+2\Theta_2) - \frac{ck}{\mathcal{H}}\Theta_0^\prime\Bigr].
+\end{align*}
+
+Furthermore, we set the following initial conditions:
+\begin{align*}
+    &\Theta_0 =&& -\frac{1}{2} \Psi, \\
+    &\Theta_1 =&& +\frac{ck}{6\mathcal{H}}\Psi, \\
+    &\mathcal{N}_0 =&& -\frac{1}{2} \Psi, \\
+    &\mathcal{N}_1 =&& +\frac{ck}{6\mathcal{H}}\Psi, \\
+    &\mathcal{N}_2 =&& -\frac{c^2k^2 a^2 (\Phi+\Psi)}{12H_0^2\Omega_{\nu 0}},\\
+    &\mathcal{N}_\ell =&& \frac{ck}{(2\ell+1)\mathcal{H}} \mathcal{N}_{\ell-1}, &\quad\quad \ell \ge 3,\\
+    &\delta_{\rm CDM} = \delta_b =&& -\frac{3}{2} \Psi, \\
+    &v_{\rm CDM} = v_b =&& -\frac{ck}{2\mathcal{H}} \Psi,\\
+    &\Phi =&& -(1+\frac{2f_\nu}{5})\Psi, \\
+    &\Psi =&& -\frac{1}{\frac{3}{2} + \frac{2f_\nu}{5}},\\
+\end{align*}
+where
+\begin{equation}
+f_{\nu} = \frac{\Omega_{\nu 0}}{\Omega_{\gamma 0} + \Omega_{\nu 0}}.
+\end{equation}
+
+At later times, photons and baryons decouple. As such, we need to define a new equation regime to correctly describe the evolution of our quantities of interest. Most quantities behave the same, with some exceptions, and, as optical depth becomes lower, we become sensitive to higher multipoles (smaller scales) and to polarization:
+
+\begin{align*}
+&\Theta^\prime_0 =&& -\frac{ck}{\mathcal{H}} \Theta_1 - \Phi^\prime, \\
+&\Theta^\prime_1 =&&  \frac{ck}{3\mathcal{H}} \Theta_0 - \frac{2ck}{3\mathcal{H}}\Theta_2 +
+\frac{ck}{3\mathcal{H}}\Psi + \tau^\prime\left[\Theta_1 + \frac{1}{3}v_b\right], \\
+&\Theta^\prime_\ell =&& \frac{\ell ck}{(2\ell+1)\mathcal{H}}\Theta_{\ell-1} - \frac{(\ell+1)ck}{(2\ell+1)\mathcal{H}}
+\Theta_{\ell+1} + \\&&&\tau^\prime\left[\Theta_\ell - \frac{1}{10}\Pi
+\delta_{\ell,2}\right], \quad\quad 2 \le \ell < \ell_{\textrm{max}}, \\
+&\Theta_{\ell_{\textrm{max}}}^\prime =&& \frac{ck}{\mathcal{H}}
+\Theta_{\ell_{\textrm{max}}-1}-c\frac{\ell_{\textrm{max}}+1}{\mathcal{H}\eta(x)}\Theta_{\ell_{\textrm{max}}}+\tau^\prime\Theta_{\ell_{\textrm{max}}},\\
+&\Theta^\prime_{P0} =&& -\frac{ck}{\mathcal{H}}\Theta_{P1} + \tau^\prime\left[\Theta_{P0} -
+\frac{1}{2}\Pi \right],\\
+&\Theta_{P\ell}^\prime =&& \frac{\ell ck}{(2\ell+1)\mathcal{H}} \Theta_{\ell-1}^P -
+\frac{(\ell+1)ck}{(2\ell+1)\mathcal{H}} \Theta_{\ell+1}^P +\\& && \tau^\prime\left[\Theta_\ell^P -
+\frac{1}{10}\Pi\delta_{\ell,2}\right],\quad\quad 1 \le \ell < \ell_{\textrm{max}}, \\
+&\Theta_{P,\ell_{\textrm{max}}}^\prime =&& \frac{ck}{\mathcal{H}}
+\Theta_{\ell_{\textrm{max}}-1}^P-c\frac{\ell_{\textrm{max}}+1}{\mathcal{H}\eta(x)}\Theta_{\ell_{\textrm{max}}}^P+\tau^\prime\Theta_{\ell_{\textrm{max}}}^P,\\
+&\mathcal{N}^\prime_0 =&& -\frac{ck}{\mathcal{H}} \mathcal{N}_1 - \Phi^\prime, \\
+&\mathcal{N}^\prime_1 =&&  \frac{ck}{3\mathcal{H}} \mathcal{N}_0 - \frac{2ck}{3\mathcal{H}}\mathcal{N}_2 + 
+\frac{ck}{3\mathcal{H}}\Psi, \\
+&\mathcal{N}^\prime_\ell =&& \frac{\ell ck}{(2\ell+1)\mathcal{H}} \mathcal{N}_{\ell-1} -
+\frac{(\ell+1)ck}{(2\ell+1)\mathcal{H}}\mathcal{N}_{\ell+1},\quad\quad 2 \le \ell <
+\ell_{\textrm{max},\nu}, \\
+&\mathcal{N}_{\ell_{\textrm{max},\nu}}^\prime =&& \frac{ck}{\mathcal{H}}
+\mathcal{N}_{\ell_{\textrm{max},\nu}-1}-c\frac{\ell_{\textrm{max},\nu}+1}{\mathcal{H}\eta(x)}\mathcal{N}_{\ell_{\textrm{max},\nu}},\\
+&\delta_{\rm CDM}^\prime =&& \frac{ck}{\mathcal{H}} v_{\rm CDM} - 3\Phi^\prime, \\
+&v_{\rm CDM}^\prime =&& -v_{\rm CDM} -\frac{ck}{\mathcal{H}} \Psi, \\
+&\delta_b^\prime =&& \frac{ck}{\mathcal{H}}v_b -3\Phi^\prime, \\
+&v_b^\prime =&& -v_b - \frac{ck}{\mathcal{H}}\Psi + \tau^\prime R(3\Theta_1 + v_b), \\
+&\Phi^\prime =&& \Psi - \frac{c^2k^2}{3\mathcal{H}^2} \Phi + \frac{H_0^2}{2\mathcal{H}^2}
+\Bigl[\Omega_{\rm CDM 0} a^{-1} \delta_{\rm CDM} + \Omega_{b 0} a^{-1} \delta_b + \\& &&4\Omega_{\gamma 0}
+a^{-2}\Theta_0 + 4\Omega_{\nu 0}a^{-2}\mathcal{N}_0\Bigr], \\
+&\Psi =&& -\Phi - \frac{12H_0^2}{c^2k^2a^2}\left[\Omega_{\gamma 0}\Theta_2 + \Omega_{\nu 0}\mathcal{N}_2\right].
+\end{align*}
+
+Lastly, we also need to set initial conditions for this system. As this follows right after the tight coupling regime ends, we can use the last results for each previously calculated quantity as the initial conditions for the same quantities. For the quantities that are not observed in tight coupling, but are now observed in this new regime, we use the following initial conditions:
+
+\begin{align*}
+&\Theta_2 = -\frac{8ck}{15\mathcal{H}\tau^\prime} \Theta_1,\\
+&\Theta_\ell = -\frac{\ell}{2\ell+1} \frac{ck}{\mathcal{H}\tau^\prime} \Theta_{\ell-1},\\
+&\Theta_0^P = \frac{5}{4} \Theta_2, \\
+&\Theta_1^P = -\frac{ck}{4\mathcal{H}\tau'} \Theta_2, \\
+&\Theta_2^P = \frac{1}{4}\Theta_2, \\
+&\Theta_\ell^P = -\frac{\ell}{2\ell+1} \frac{ck}{\mathcal{H}\tau^\prime} \Theta_{\ell-1}^P.
+\end{align*}
+
 \section{Implementation, numerical methods and tests}
 
 We now want to use the previously presented equations in order to compute the relevant quantities over different scale factors. The code to reproduce this simulation is available at \url{https://github.com/anaismartins/AST5220-Cosmology}. For more readable but still fast calculations, these were written in Python (\texttt{src/python}) with equations ported from C++ (\texttt{src/cpp}) using \texttt{ctypes} \citep{ctypes}.
@@ -284,6 +395,16 @@ In order to find $X_e$ using the Saha equations, we start by setting $f_e$, defi
 Computationally, we switch from the Saha regime to the Peebles regime once $X_e$ given by Saha is smaller than 0.99. Even so, we want to show what it would look like to keep solving the Saha equations for all $x$, and for this we approximate $X_e$ as the square-root of the right hand side of the hydrogen equation (see \eqref{eq:saha_h}) once that is smaller than $10^{-5}$.
 
 We are not able to solve the Peebles ODE in the early Universe as it is numerically unstable then. It is also necessary to point out that, when solving for the $\beta$ and $\beta_2$ components of the right hand side of the Peebles equation, the exponentials contained in them become very large, thus resulting in overflow. As such, if the exponent is larger than 700, these quantities are directly set to zero. Additionally, the Peebles ODE is solved for all relevant $x$ and only afterwards is $X_e$ corrected for reionisation.
+
+\subsection{Perturbations}
+
+\subsubsection{Solving higher order ODEs}
+
+In practice, solving higher-than-first order ODEs computationally works virtually the same way as solving first order ones. However, for our equation system after photons decouple, we would have to solve a system with an infinitely large number of equations, which is of course not possible, so we would need to make use of approximations. A method called line-of-sight integration, developed by \citeauthor{1996ApJ...469..437S}, allows us so set a relatively low $\ell_{\textrm{max}}$ while not needing to do approximations.
+
+\subsubsection{Propagating perturbations through two different regimes}
+
+The full system of equations is very stiff at early times, which makes it so that we have to split the time into to two regimes. As such, we first solve the tight coupling system of equations, between some $x_\textrm{min}$ until around $x = -8.3$. When the ODE system is solved, we take the final value for each of the simulated quantities and use it as an initial condition for solving the second ODE system of equations.
 
 \section{Results}
 
@@ -431,7 +552,11 @@ Reionisation & -2.2014 & 8.0377 & 633.34\\
 \end{tabular}
 \end{table*}
 
+\hw{In table 2 “Reionisation” you also compute when reionization is. Is this using Xe = 0.1 as for recombination? Just asking as the time for when reionisation should be is basically an input parameter to our reionisation model}
+
 The optical depth $\tau$ (blue) and its first (orange, times -1) and second (green) derivatives w.r.t. $x$ over time $x$ are shown in Figure \ref{fig:tau}. We can see that the optical depth in the early Universe is very large, meaning the photon-baryon plasma is an optically thick medium, where no light can be transmitted. The time of the last scattering is pointed out by the black vertical dashed line, defined by $\tau=1$. After this point, the optical depth is lower than one stable until reionisation, and thereafter it starts decreasing again, meaning photons are able to travel through the medium since recombination until today.
+
+\hw{Around -8.5 to -8.0...  at around 0.00026736”  x = -8.5, … $X_e$ = 0.00026…“(orange, times -1)” Just (orange) is fine here, the label/caption explains the details.}
 
 \begin{figure}[ht]
     \centering
@@ -445,11 +570,66 @@ One last useful visualization is Figure \ref{fig:gtilde}, where we look at the v
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\hsize]{report/figures/gtilde.pdf}
-    \caption{Visibility function $\tilde g$ (blue) and its first (orange) and second (green) derivatives w.r.t. $x$ over time. All are normalized.}
+    \caption{Visibility function $\tilde g$ (blue) and its first (orange) and second (green) derivatives w.r.t. $x$ over time. All are normalized. \hw{“All are normalized.” How are they normalized? The label says it’s just g, g’, g’’.}}
     \label{fig:gtilde}
 \end{figure}
 
 We can calculate the distance a sound-wave can propagate through the photon-baryon plasma from the Big Bang until recombination by calculating the sound-horizon at decoupling, which is then $r_s = 144.84$ Mpc.
+
+\subsection{Perturbations}
+
+Let us now take a look at how our quantities of interest evolve with time.
+
+First, we look at the density perturbations in Figure \ref{fig:densities}. In all of the panels, we can see that the quantities are constant up until a certain time. Each scale starts diverging from this constant value at a different time, the time each of them entering the horizon, with the smallest scale, naturally, being the first to enter the horizon and be able to interact gravitationally. After this, the photon and neutrino overdensities start oscillating. This happens because, as time goes on, the perturbations tend to "fall into themselves", i.e. be affected by gravitational attraction and become bigger. At the same time, their pressure has the opposite effect and, as overdensities get to a certain density, pressure makes them become less dense again, and this happens repeatedly, being damped by the expansion of the Universe, until their density starts tending to a specific value. This is smaller/larger for smaller/larger scales. CDM, on the other hand, does not interact, and thus does not go through these oscillations. For baryons, the same oscillatory behavior happens, but is quickly dominated by the effect of the denser CDM, and tends to its same density.
+
+\begin{figure*}[htp]
+  \centering
+  \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/delta_gamma.png}}\quad
+  \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/delta_cdm_delta_b.png}}\quad
+  \subfigure[]{\includegraphics[width=0.32\hsize
+]{report/figures/delta_nu.png}}
+\caption{Density perturbations $\delta$ over time. Each panel shows the evolution of the photon overdensity (a), CDM (solid) and baryon (dashed) overdensity (b) and neutrino overdensity (c). Each of the colored curves shows a different scale from biggest ($k = 0.001$ Mpc$^{-1}$, blue) to smallest ($k=0.1$ Mpc$^{-1}$, green).}
+\label{fig:densities}
+\end{figure*}
+
+The evolution of the perturbation velocities is shown in Figure \ref{fig:velocities} and the shape of the curves is explained by the same physics, as well as the photon and neutrino quadrupole in Figure \ref{fig:theta2-nu2}. The photon quadrupole has a slightly different behavior, as the modes all start oscillating at the same time, once photons decouple, as this quantity is not relevant before then.
+
+\begin{figure*}[htp]
+  \centering
+  \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/v_gamma.png}}\quad
+  \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/v_cdm_v_b.png}}\quad
+  \subfigure[]{\includegraphics[width=0.32\hsize
+]{report/figures/v_nu.png}}
+\caption{Velocity perturbations $v$ over time. Each panel shows the evolution of the photon perturbation velocity (a), CDM (solid) and baryon (dashed) perturbations velocity (b) and neutrino perturbation velocity (c). Each of the colored curves shows a different scale from biggest ($k = 0.001$ Mpc$^{-1}$, blue) to smallest ($k=0.1$ Mpc$^{-1}$, green).}
+\label{fig:velocities}
+\end{figure*}
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\hsize]{report/figures/Theta2_Nu2.png}
+    \caption{Photon (solid) and neutrino (dashed) quadrupoles over time. Each of the colored curves shows a different scale from biggest ($k = 0.001$ Mpc$^{-1}$, blue) to smallest ($k=0.1$ Mpc$^{-1}$, green).}
+    \label{fig:theta2-nu2}
+\end{figure}
+
+Figure \ref{fig:potentials} shows the evolution of the metric potentials $\Phi$, as well as the anisotropic stress ($\Phi +\Psi$) over time. It is particularly interesting to look at the anisotropic stress (dashed) curve, where we see that the approximation $\Phi = - \Psi$ holds at later times, when the photon and neutrino quadrupoles are negligible (seen when compared to Figure \ref{fig:theta2-nu2}), i.e. stress from different directions is only relevant when photons and neutrinos have appreciable quadrupole momentums.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\hsize]{report/figures/Phi_Psi.png}
+    \caption{$\Phi$ potential (solid) and anisotropic stress (dashed) over time. Each of the colored curves shows a different scale from biggest ($k = 0.001$ Mpc$^{-1}$, blue) to smallest ($k=0.1$ Mpc$^{-1}$, green).}
+    \label{fig:potentials}
+\end{figure}
+
+Lastly, we take a look at how polarization evolves over time in Figure \ref{fig:thetap}. The same dampened oscillatory behavior is present as in the temperature perturbations, but here we can see that the scale is irrelavant for when the modes start oscillating, as polarization is only relevant after photons decouple, as similarly seen for the temperature quadrupole.
+
+\begin{figure*}[ht]
+    \centering
+    \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/Theta_p0.png}}\quad
+    \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/Theta_p1.png}}\quad
+    \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/Theta_p2.png}}
+    \caption{Photon monopole (a), dipole (b) and quadrupole polarization perturbations over time. Each of the colored curves shows a different scale from biggest ($k = 0.001$ Mpc$^{-1}$, blue) to smallest ($k=0.1$ Mpc$^{-1}$, green).}
+    \label{fig:thetap}
+\end{figure*}
 
 \section{Conclusions}
 
@@ -458,7 +638,11 @@ We have simulated the Universe from the CMB until the present day. We present va
 
 \subsection{Recombination History}
 
-We have simulated the recombination and reionisation events, considering that the neutral atoms era is made up of only hydrogen and helium. For this, we calculated the electron fraction using the Saha and Peebles equations, which then gives us the optical depth which in turn gives us the visibility function. We find that decoupling happens around $x=-7$ and reionisation around $x=2.2$. The fractional electron density $X_e$ at freeze-out is 0.00026736. The sound-horizon at decoupling $r_s$ is 144.84 Mpc.
+We have simulated the recombination and reionisation events, considering that the neutral atoms era is made up of only hydrogen and helium. For this, we calculated the electron fraction using the Saha and Peebles equations, which then gives us the optical depth which in turn gives us the visibility function. We find that decoupling happens around $x=-7$ and reionisation around $x=-2.2$. The fractional electron density $X_e$ at freeze-out is 0.00026736. The sound-horizon at decoupling $r_s$ is 144.84 Mpc.
+
+\subsection{Perturbations}
+
+We have perturbed our metric and propagated it through time in order to simulate how different quantities evolve over time, in particular the temperature, polarization and neutrino monopoles, dipoles and quadrupoles, as well s the CDM and baryon overdensities and perturbation velocities. We observe that, in general, modes start diverging from their initial condition depending on their scales, with smaller (larger) scales entering the horizon earlier (later). After this, the modes act as dampened oscillators due to the expansion of the Universe. Furthermore, we observe that CDM does not interact and that the start of oscillations for temperature multipoles equal to or higher than two and polarization multipoles are independent of their scale, as they are not prevalent at the time they would normally enter the horizon.
 
 %\begin{acknowledgements}
 
