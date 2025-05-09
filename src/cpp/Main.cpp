@@ -83,7 +83,7 @@ int main(int argc, char **argv)
   pert.output(kvalue, "output/data/perturbations_k0.01.txt");
 
   // Remove when module is completed
-  return 0;
+  // return 0;
 
   //=========================================================================
   // Module IV
@@ -91,7 +91,8 @@ int main(int argc, char **argv)
 
   PowerSpectrum power(&cosmo, &rec, &pert, A_s, n_s, kpivot_mpc);
   power.solve();
-  power.output("cells.txt");
+  printf("PowerSpectrum solved\n");
+  power.output("output/data/cells.txt");
 
   // Remove when module is completed
   return 0;

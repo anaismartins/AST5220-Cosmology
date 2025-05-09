@@ -62,7 +62,7 @@ for ki in range(len(k)):
         delta_nu[ki, xi] = 4 * pert.get_Nu(x[xi], k[ki], 0)
 
 rc("text", usetex=True)
-rc("font", family="serif")
+rc("font", family="serif", size=16)
 
 # plot delta_gamma
 plt.figure(figsize=(8, 6))
@@ -75,7 +75,8 @@ plt.title(r"$\delta_\gamma$ vs $x$")
 plt.legend()
 plt.grid()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/delta_gamma.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/delta_gamma.png",
+    bbox_inches="tight",
 )
 
 # plot delta_cdm and delta_b together
@@ -93,7 +94,8 @@ plt.title(r"$\delta_{CDM}$ and $\delta_{b}$ vs $x$")
 plt.legend()
 plt.grid()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/delta_cdm_delta_b.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/delta_cdm_delta_b.png",
+    bbox_inches="tight",
 )
 
 # plot delta_nu
@@ -107,7 +109,8 @@ plt.title(r"$\delta_\nu$ vs $x$")
 plt.legend()
 plt.grid()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/delta_nu.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/delta_nu.png",
+    bbox_inches="tight",
 )
 
 # get velocity perturbations
@@ -134,7 +137,8 @@ plt.title(r"$v_\gamma$ vs $x$")
 plt.legend()
 plt.grid()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/v_gamma.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/v_gamma.png",
+    bbox_inches="tight",
 )
 
 # plot v_cdm and v_b together
@@ -152,7 +156,8 @@ plt.title(r"$v_{CDM}$ and $v_{b}$ vs $x$")
 plt.legend()
 plt.grid()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/v_cdm_v_b.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/v_cdm_v_b.png",
+    bbox_inches="tight",
 )
 
 # plot v_nu
@@ -166,7 +171,8 @@ plt.title(r"$v_\nu$ vs $x$")
 plt.legend()
 plt.grid()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/v_nu.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/v_nu.png",
+    bbox_inches="tight",
 )
 
 # get photon and neutrino quadrupoles
@@ -191,7 +197,8 @@ plt.title(r"$\Theta_2$ and $\nu_2$ vs $x$")
 plt.legend()
 plt.grid()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Theta2_Nu2.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Theta2_Nu2.png",
+    bbox_inches="tight",
 )
 # plt.show()
 
@@ -217,7 +224,8 @@ plt.title(r"$\Phi$ and $\Phi+\Psi$ vs $x$")
 plt.legend()
 plt.grid()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Phi_Psi.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Phi_Psi.png",
+    bbox_inches="tight",
 )
 
 # get the polarization multipoles 0, 1 and 2
@@ -230,22 +238,52 @@ for ell in range(3):
 # plot Theta_p
 plt.figure(figsize=(8, 6))
 plt.plot(x, Theta_p[0, 0], label=r"$k=0.001 \mathrm{Mpc}^{-1}$")
-plt.plot(x, Theta_p[0, 1], color="C0", linestyle="--")
-plt.plot(x, Theta_p[0, 2], color="C0", linestyle=":")
+# plt.plot(x, Theta_p[0, 1], color="C0", linestyle="--")
+# plt.plot(x, Theta_p[0, 2], color="C0", linestyle=":")
 plt.plot(x, Theta_p[1, 0], label=r"$k=0.01 \mathrm{Mpc}^{-1}$")
-plt.plot(x, Theta_p[1, 1], color="C1", linestyle="--")
-plt.plot(x, Theta_p[1, 2], color="C1", linestyle=":")
+# plt.plot(x, Theta_p[1, 1], color="C1", linestyle="--")
+# plt.plot(x, Theta_p[1, 2], color="C1", linestyle=":")
 plt.plot(x, Theta_p[2, 0], label=r"$k=0.1 \mathrm{Mpc}^{-1}$")
-plt.plot(x, Theta_p[2, 1], color="C2", linestyle="--")
-plt.plot(x, Theta_p[2, 2], color="C2", linestyle=":")
+# plt.plot(x, Theta_p[2, 1], color="C2", linestyle="--")
+# plt.plot(x, Theta_p[2, 2], color="C2", linestyle=":")
 plt.xlabel(r"$x$")
-plt.ylabel(r"$\Theta_p$")
-plt.title(r"$\Theta_p$ vs $x$")
+plt.ylabel(r"$\Theta_{p0}$")
+plt.title(r"$\Theta_{p0}$ vs $x$")
 plt.legend()
 plt.grid()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Theta_p.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Theta_p0.png",
+    bbox_inches="tight",
 )
+
+plt.figure(figsize=(8, 6))
+plt.plot(x, Theta_p[0, 1], label=r"$k=0.001 \mathrm{Mpc}^{-1}$")
+plt.plot(x, Theta_p[1, 1], label=r"$k=0.01 \mathrm{Mpc}^{-1}$")
+plt.plot(x, Theta_p[2, 1], label=r"$k=0.1 \mathrm{Mpc}^{-1}$")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$\Theta_{p1}$")
+plt.title(r"$\Theta_{p1}$ vs $x$")
+plt.legend()
+plt.grid()
+plt.savefig(
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Theta_p1.png",
+    bbox_inches="tight",
+)
+
+plt.figure(figsize=(8, 6))
+plt.plot(x, Theta_p[0, 2], label=r"$k=0.001 \mathrm{Mpc}^{-1}$")
+plt.plot(x, Theta_p[1, 2], label=r"$k=0.01 \mathrm{Mpc}^{-1}$")
+plt.plot(x, Theta_p[2, 2], label=r"$k=0.1 \mathrm{Mpc}^{-1}$")
+plt.xlabel(r"$x$")
+plt.ylabel(r"$\Theta_{p2}$")
+plt.title(r"$\Theta_{p2}$ vs $x$")
+plt.legend()
+plt.grid()
+plt.savefig(
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Theta_p2.png",
+    bbox_inches="tight",
+)
+
 
 # tests
 
@@ -294,5 +332,6 @@ plt.title(r"$\Theta_0 + \Psi$ and $\cos(k \eta / \sqrt{3})$ vs $x$")
 plt.legend()
 plt.grid()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Theta_0_Psi_cos.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/Perturbations/Theta_0_Psi_cos.png",
+    bbox_inches="tight",
 )

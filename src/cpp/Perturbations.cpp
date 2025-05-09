@@ -495,7 +495,21 @@ void Perturbations::compute_source_functions()
       // Polarization source
       if (Constants.polarization)
       {
-        SE_array[index] = 3. * g_tilde * Pi / (4. * k * k * (eta_0 - eta) * (eta_0 - eta));
+        if (x < -0.02)
+        {
+          SE_array[index] = 3. * g_tilde * Pi / (4. * k * k * (eta_0 - eta) * (eta_0 - eta));
+        }
+        else
+        {
+          SE_array[index] = 0.0;
+        }
+
+        // check for nans or other problems
+        if (std::isnan(SE_array[index]))
+        {
+          printf("SE_array[%d] is nan\n", index);
+          throw std::runtime_error("SE_array is nan");
+        }
       }
     }
   }
