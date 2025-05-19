@@ -24,37 +24,23 @@ PowerSpectrum::PowerSpectrum(
 //====================================================
 void PowerSpectrum::solve()
 {
-  double eta0 = cosmo->eta_of_x(0.0);
-  double deltak = 2. * M_PI / eta0 / 6.;
-  double k_max = 3000. / eta0;
-  int n_k = int((k_max - k_min) / deltak);
-
-  printf("n_k = %d\n", n_k);
-
-  Vector k_array = Utils::linspace(k_min, k_max, n_k);
-
-  double deltak_log = 2. * M_PI / (eta0 * k_max * 6.);
-  int n_k_log = int((log(k_max) - log(k_min)) / deltak_log);
-
-  Vector log_k_array = Utils::logspace(log10(k_min), log10(k_max), n_k_log);
-
   generate_bessel_function_splines();
 
-  line_of_sight_integration(k_array);
+  line_of_sight_integration();
 
   printf("line_of_sight_integration done\n");
 
-  auto cell_TT = solve_for_cell(log_k_array, thetaT_ell_of_k_spline, thetaT_ell_of_k_spline);
+  auto cell_TT = solve_for_cell(thetaT_ell_of_k_spline, thetaT_ell_of_k_spline);
   cell_TT_spline.create(ells, cell_TT, "Cell_TT_of_ell");
 
   // printf("cell_TT_spline created\n");
 
-  auto cell_TE = solve_for_cell(log_k_array, thetaT_ell_of_k_spline, thetaE_ell_of_k_spline);
+  auto cell_TE = solve_for_cell(thetaT_ell_of_k_spline, thetaE_ell_of_k_spline);
   cell_TE_spline.create(ells, cell_TE, "Cell_TE_of_ell");
 
   // printf("cell_TE_spline created\n");
 
-  auto cell_EE = solve_for_cell(log_k_array, thetaE_ell_of_k_spline, thetaE_ell_of_k_spline);
+  auto cell_EE = solve_for_cell(thetaE_ell_of_k_spline, thetaE_ell_of_k_spline);
   cell_EE_spline.create(ells, cell_EE, "Cell_EE_of_ell");
 }
 
@@ -164,7 +150,7 @@ Vector2D PowerSpectrum::line_of_sight_integration_single(
 //====================================================
 // Do the line of sight integration
 //====================================================
-void PowerSpectrum::line_of_sight_integration(Vector &k_array)
+void PowerSpectrum::line_of_sight_integration()
 {
   const int nells = ells.size();
 
@@ -180,6 +166,13 @@ void PowerSpectrum::line_of_sight_integration(Vector &k_array)
   {
     return pert->get_Source_T(x, k);
   };
+
+  double eta0 = cosmo->eta_of_x(0.0);
+  double deltak = 2. * M_PI / eta0 / 6.;
+  double k_max = 3000. / eta0;
+  int n_k = int((k_max - k_min) / deltak);
+
+  Vector k_array = Utils::linspace(k_min, k_max, n_k);
 
   // Do the line of sight integration
   Vector2D thetaT_ell_of_k = line_of_sight_integration_single(k_array, source_function_T);
@@ -222,22 +215,11 @@ void PowerSpectrum::line_of_sight_integration(Vector &k_array)
 // Cell = Int_0^inf 4 * pi * P(k) f_ell g_ell dk/k
 //====================================================
 Vector PowerSpectrum::solve_for_cell(
-    Vector &log_k_array,
     std::vector<Spline> &f_ell_spline,
     std::vector<Spline> &g_ell_spline)
 {
   const int nells = ells.size();
   Vector result = Vector(nells, 0.0);
-
-  //============================================================================
-  // TODO: Integrate Cell = Int 4 * pi * P(k) f_ell g_ell dk/k
-  // or equivalently solve the ODE system dCell/dlogk = 4 * pi * P(k) * f_ell * g_ell
-  //============================================================================
-
-  // ...
-  // ...
-  // ...
-  // ...
 
   double factor = 4.0 * M_PI;
 
@@ -245,6 +227,9 @@ Vector PowerSpectrum::solve_for_cell(
   double k_max = 3000. / eta0;
 
   double deltak_log = 2. * M_PI / (eta0 * k_max * 6.);
+  int n_k_log = int((log(k_max) - log(k_min)) / deltak_log);
+
+  Vector log_k_array = Utils::logspace(log10(k_min), log10(k_max), n_k_log);
 
   for (int elli = 0; elli < nells; elli++)
   {
@@ -266,7 +251,7 @@ Vector PowerSpectrum::solve_for_cell(
 
       double primordial = primordial_power_spectrum(k);
 
-      double integrand = primordial * f_ell * g_ell * deltak_log / k;
+      double integrand = primordial * f_ell * g_ell * deltak_log;
 
       result[elli] += integrand;
     }
@@ -393,5 +378,12 @@ extern "C"
       const double ell)
   {
     return ps->get_cell_TT(ell);
+  }
+  double PowerSpectrum_get_matter_power_spectrum(
+      PowerSpectrum *ps,
+      const double x,
+      const double k_mpc)
+  {
+    return ps->get_matter_power_spectrum(x, k_mpc);
   }
 }

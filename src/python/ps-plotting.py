@@ -122,8 +122,24 @@ for elli in range(len(ells)):
     cell_TT[elli] = ps.get_cell_TT(ells[elli])
     cell_plot[elli] = ells[elli] * (ells[elli] + 1) / (2 * np.pi) * cell_TT[elli]
 
-plt.plot(ells, cell_plot)
+plt.plot(ells, cell_plot * 10e6**2)
 plt.xlabel(r'$\ell$')
-plt.ylabel(r'$\frac{\ell(\ell+1)C_\ell^{TT}}{2\pi}$')
+plt.ylabel(r'$\frac{\ell(\ell+1)C_\ell^{TT}}{2\pi}$ ($\mu K^2$)')
 plt.xscale('log')
+plt.yscale('log')
+plt.show()
+
+# plot matter power spectrum
+plt.figure(figsize=(10, 6))
+x = 0
+matter_power_spectrum = np.zeros(len(ks))
+for ki in range(len(ks)):
+    matter_power_spectrum[ki] = ps.get_matter_power_spectrum(x, ks[ki])
+
+matter_power_spectrum = matter_power_spectrum / (Mpc / h)**3
+plt.plot(ks * Mpc / h, matter_power_spectrum)
+plt.xlabel(r'$k$ (h/Mpc)')
+plt.ylabel(r'$P(k)$')
+plt.xscale('log')
+plt.yscale('log')
 plt.show()

@@ -18,6 +18,9 @@ class PowerSpectrum(object):
         lib.PowerSpectrum_get_cell_TT.argtypes = [c_void_p, c_double]
         lib.PowerSpectrum_get_cell_TT.restype = c_double
 
+        lib.PowerSpectrum_get_matter_power_spectrum.argtypes = [c_void_p, c_double, c_double]
+        lib.PowerSpectrum_get_matter_power_spectrum.restype = c_double
+
         self.obj = lib.PowerSpectrum_new(cosmo.obj, rec.obj, pert.obj, A_s, n_s, kpivot_mpc)
 
     def solve(self):
@@ -28,3 +31,6 @@ class PowerSpectrum(object):
     
     def get_cell_TT(self, ell):
         return lib.PowerSpectrum_get_cell_TT(self.obj, ell)
+    
+    def get_matter_power_spectrum(self, x, k):
+        return lib.PowerSpectrum_get_matter_power_spectrum(self.obj, x, k)
