@@ -146,6 +146,7 @@ extern "C"
   double Perturbations_get_Phi(Perturbations *pert, const double x, const double k);
   double Perturbations_get_Psi(Perturbations *pert, const double x, const double k);
   double Perturbations_get_Theta_p(Perturbations *pert, const double x, const double k, const double ell);
+  double Perturbations_get_source_T(Perturbations *pert, const double x, const double k);
 }
 
 #endif

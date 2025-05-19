@@ -30,16 +30,6 @@ private:
     // The k-values we compute Theta_ell(k) etc. for
     const double k_min = Constants.k_min;
 
-    // The ells's we will compute Theta_ell and Cell for
-    Vector ells{
-        2, 3, 4, 5, 6, 7, 8, 10, 12, 15,
-        20, 25, 30, 40, 50, 60, 70, 80, 90, 100,
-        120, 140, 160, 180, 200, 225, 250, 275, 300, 350,
-        400, 450, 500, 550, 600, 650, 700, 750, 800, 850,
-        900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350,
-        1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850,
-        1900, 1950, 2000};
-
     //=====================================================================
     // [1] Create bessel function splines needed for the LOS integration
     //=====================================================================
@@ -62,12 +52,11 @@ private:
     // Do the line of sight integration for a single quantity
     // for all ells by providing a source_function(x,k) (can be temp, pol, ...)
     Vector2D line_of_sight_integration_single(
-        Vector &k_array,
+        const Vector &k_array,
         std::function<double(double, double)> &source_function);
 
     // Splines of the reusult of the LOS integration
     // Theta_ell(k) and ThetaE_ell(k) for polarization
-    std::vector<Spline> thetaT_ell_of_k_spline;
     std::vector<Spline> thetaE_ell_of_k_spline;
 
     //=====================================================================
@@ -114,6 +103,33 @@ public:
 
     // Output Cells in units of l(l+1)/2pi (muK)^2
     void output(std::string filename) const;
+
+    // changed some stuff from private to public so that I can run my wrapper functions
+    // The ells's we will compute Theta_ell and Cell for
+    Vector ells{
+        2, 3, 4, 5, 6, 7, 8, 10, 12, 15,
+        20, 25, 30, 40, 50, 60, 70, 80, 90, 100,
+        120, 140, 160, 180, 200, 225, 250, 275, 300, 350,
+        400, 450, 500, 550, 600, 650, 700, 750, 800, 850,
+        900, 950, 1000, 1050, 1100, 1150, 1200, 1250, 1300, 1350,
+        1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850,
+        1900, 1950, 2000};
+
+    std::vector<Spline> thetaT_ell_of_k_spline;
 };
+
+extern "C"
+{
+    PowerSpectrum *PowerSpectrum_new(
+        BackgroundCosmology *cosmo,
+        RecombinationHistory *rec,
+        Perturbations *pert,
+        double A_s,
+        double n_s,
+        double kpivot_mpc);
+    void PowerSpectrum_solve(PowerSpectrum *ps);
+    double PowerSpectrum_get_thetaT_ell_of_k(PowerSpectrum *ps, const double ell, const double k);
+    double PowerSpectrum_get_cell_TT(PowerSpectrum *ps, const double ell);
+}
 
 #endif

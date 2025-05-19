@@ -45,6 +45,9 @@ class Perturbations(object):
         ]
         lib.Perturbations_get_Theta_p.restype = c_double
 
+        lib.Perturbations_get_source_T.argtypes = [c_void_p, c_double, c_double]
+        lib.Perturbations_get_source_T.restype = c_double
+
         self.obj = lib.Perturbations_new(cosmo.obj, rec.obj)
 
     def solve(self):
@@ -76,3 +79,6 @@ class Perturbations(object):
 
     def get_Theta_p(self, x, k, ell):
         return lib.Perturbations_get_Theta_p(self.obj, x, k, ell)
+
+    def get_source_T(self, x, k):
+        return lib.Perturbations_get_source_T(self.obj, x, k)

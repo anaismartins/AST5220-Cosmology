@@ -47,12 +47,12 @@ void PowerSpectrum::solve()
   auto cell_TT = solve_for_cell(log_k_array, thetaT_ell_of_k_spline, thetaT_ell_of_k_spline);
   cell_TT_spline.create(ells, cell_TT, "Cell_TT_of_ell");
 
-  printf("cell_TT_spline created\n");
+  // printf("cell_TT_spline created\n");
 
   auto cell_TE = solve_for_cell(log_k_array, thetaT_ell_of_k_spline, thetaE_ell_of_k_spline);
   cell_TE_spline.create(ells, cell_TE, "Cell_TE_of_ell");
 
-  printf("cell_TE_spline created\n");
+  // printf("cell_TE_spline created\n");
 
   auto cell_EE = solve_for_cell(log_k_array, thetaE_ell_of_k_spline, thetaE_ell_of_k_spline);
   cell_EE_spline.create(ells, cell_EE, "Cell_EE_of_ell");
@@ -90,6 +90,8 @@ void PowerSpectrum::generate_bessel_function_splines()
     {
       // Compute the bessel function
       double j = Utils::j_ell(ell, x_jell[xi]);
+
+      // std::cout << "j_ell[" << ell << "](" << x_jell[xi] << ") = " << j << std::endl;
       // Store the result in the vector
       j_ell[xi] = j;
     }
@@ -97,7 +99,7 @@ void PowerSpectrum::generate_bessel_function_splines()
     // Make the j_ell_splines[i] spline
     j_ell_splines[i].create(x_jell, j_ell, "j_ell_spline");
 
-    printf("j_ell_spline[%d] created\n", ell);
+    // printf("j_ell_spline[%d] created\n", ell);
   }
 
   Utils::EndTiming("besselspline");
@@ -109,7 +111,7 @@ void PowerSpectrum::generate_bessel_function_splines()
 //====================================================
 
 Vector2D PowerSpectrum::line_of_sight_integration_single(
-    Vector &k_array,
+    const Vector &k_array,
     std::function<double(double, double)> &source_function)
 {
   Utils::StartTiming("lineofsight");
@@ -127,30 +129,18 @@ Vector2D PowerSpectrum::line_of_sight_integration_single(
 
   for (size_t ik = 0; ik < k_array.size(); ik++)
   {
-    //=============================================================================
-    // TODO: Implement to solve for the general line of sight integral
-    // F_ell(k) = Int dx jell(k(eta-eta0)) * S(x,k) for all the ell values for the
-    // given value of k
-    //=============================================================================
-    // ...
-    // ...
-    // ...
 
     for (int elli = 0; elli < ells.size(); elli++)
     {
-      // printf("ell[%d] = %d\n", elli, ells[elli]);
       const int ell = ells[elli];
       double integral = 0;
 
       for (int xi = 0; xi < x_los.size(); xi++)
       {
-
         // Compute the bessel function
         double eta = cosmo->eta_of_x(x_los[xi]);
-        // printf("eta = %.2f\n", eta);
 
         double jell = j_ell_splines[elli](k_array[ik] * (eta0 - eta));
-        // printf("jell[%d](%.2f) = %.2f\n", ell, k_array[ik] * (eta0 - eta), jell);
 
         // Compute the source function
         double S = source_function(x_los[xi], k_array[ik]);
@@ -163,9 +153,6 @@ Vector2D PowerSpectrum::line_of_sight_integration_single(
       // Store the result in result[ell][ik]
       result[elli][ik] = integral;
     }
-
-    // Store the result for Source_ell(k) in results[ell][ik]
-    return result;
   }
 
   printf("line_of_sight_integration_single done\n");
@@ -179,8 +166,6 @@ Vector2D PowerSpectrum::line_of_sight_integration_single(
 //====================================================
 void PowerSpectrum::line_of_sight_integration(Vector &k_array)
 {
-  const int n_k = k_array.size();
-  const int n = 100;
   const int nells = ells.size();
 
   // Make storage for the splines we are to create
@@ -204,7 +189,8 @@ void PowerSpectrum::line_of_sight_integration(Vector &k_array)
   {
     const int ell = ells[elli];
     thetaT_ell_of_k_spline[elli].create(k_array, thetaT_ell_of_k[elli], "Theta_ell(k)");
-    printf("Theta_ell_spline[%d] created\n", ell);
+    // std::cout << "thetaT_ell_of_k_spline[" << ell << "] created\n";
+    // printf("Theta_ell_spline[%d] created\n", ell);
   }
 
   //============================================================================
@@ -221,25 +207,12 @@ void PowerSpectrum::line_of_sight_integration(Vector &k_array)
     };
 
     Vector2D thetaE_ell_of_k = line_of_sight_integration_single(k_array, source_function_E);
-    // check for nans or other problematic values
-    for (int elli = 0; elli < nells; elli++)
-    {
-      const int ell = ells[elli];
-      for (int ik = 0; ik < n_k; ik++)
-      {
-        if (std::isnan(thetaE_ell_of_k[elli][ik]))
-        {
-          printf("thetaE_ell[%d](%.2f) = %.2f\n", ell, k_array[ik], thetaE_ell_of_k[elli][ik]);
-          exit(1);
-        }
-      }
-    }
 
     for (int elli = 0; elli < nells; elli++)
     {
       const int ell = ells[elli];
       thetaE_ell_of_k_spline[elli].create(k_array, thetaE_ell_of_k[elli], "ThetaE_ell(k)");
-      printf("ThetaE_ell_spline[%d] created\n", ell);
+      // printf("ThetaE_ell_spline[%d] created\n", ell);
     }
   }
 }
@@ -293,7 +266,7 @@ Vector PowerSpectrum::solve_for_cell(
 
       double primordial = primordial_power_spectrum(k);
 
-      double integrand = primordial * f_ell * g_ell * deltak_log;
+      double integrand = primordial * f_ell * g_ell * deltak_log / k;
 
       result[elli] += integrand;
     }
@@ -325,9 +298,15 @@ double PowerSpectrum::get_matter_power_spectrum(const double x, const double k_m
   // TODO: Compute the matter power spectrum
   //=============================================================================
 
-  // ...
-  // ...
-  // ...
+  double Phi = pert->get_Phi(x, k_mpc);
+  double Omega_M = cosmo->get_OmegaB(x) + cosmo->get_OmegaCDM(x);
+  double a = exp(x);
+  double H0 = cosmo->H_of_x(0.0);
+
+  double Delta_M = Constants.c * Constants.c * k_mpc * k_mpc * Phi / (3. / 2. * Omega_M * pow(a, -1.) * H0 * H0);
+  double primordial = primordial_power_spectrum(k_mpc) / (k_mpc * k_mpc * k_mpc) * 2. * M_PI * M_PI;
+
+  pofk = Delta_M * Delta_M * primordial;
 
   return pofk;
 }
@@ -364,6 +343,7 @@ void PowerSpectrum::output(std::string filename) const
     double normfactorN = (ell * (ell + 1)) / (2.0 * M_PI) * pow(1e6 * cosmo->get_TCMB() * pow(4.0 / 11.0, 1.0 / 3.0), 2);
     double normfactorL = (ell * (ell + 1)) * (ell * (ell + 1)) / (2.0 * M_PI);
     fp << ell << " ";
+    fp << thetaT_ell_of_k_spline[0](ell) * normfactor << " ";
     fp << cell_TT_spline(ell) * normfactor << " ";
     if (Constants.polarization)
     {
@@ -373,4 +353,45 @@ void PowerSpectrum::output(std::string filename) const
     fp << "\n";
   };
   std::for_each(ellvalues.begin(), ellvalues.end(), print_data);
+}
+
+extern "C"
+{
+  PowerSpectrum *PowerSpectrum_new(
+      BackgroundCosmology *cosmo,
+      RecombinationHistory *rec,
+      Perturbations *pert,
+      double A_s,
+      double n_s,
+      double kpivot_mpc)
+  {
+    return new PowerSpectrum(cosmo, rec, pert, A_s, n_s, kpivot_mpc);
+  }
+  void PowerSpectrum_solve(PowerSpectrum *ps)
+  {
+    ps->solve();
+  }
+  double PowerSpectrum_get_thetaT_ell_of_k(
+      PowerSpectrum *ps,
+      const double ell,
+      const double k)
+  {
+    // get index of ell
+    int ell_index = -1;
+    for (int i = 0; i < ps->ells.size(); i++)
+    {
+      if (ps->ells[i] == ell)
+      {
+        ell_index = i;
+        break;
+      }
+    }
+    return ps->thetaT_ell_of_k_spline[ell_index](k);
+  }
+  double PowerSpectrum_get_cell_TT(
+      PowerSpectrum *ps,
+      const double ell)
+  {
+    return ps->get_cell_TT(ell);
+  }
 }

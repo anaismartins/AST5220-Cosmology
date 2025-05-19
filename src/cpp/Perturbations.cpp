@@ -490,7 +490,8 @@ void Perturbations::compute_source_functions()
       }
 
       // Temperatur source
-      ST_array[index] = g_tilde * (Theta[0] + Psi + 1. / 4. * Pi) + exp(-tau) * (dPsidx - dPhidx) - 1. / (c * k) * (dHpdx * g_tilde * v_b + Hp * dg_tildedx * v_b + Hp * g_tilde * dv_bdx) + 3. / (4. * c * c * k * k) * (dHpdx * (dHpdx * g_tilde * Pi + Hp * dg_tildedx * Pi + Hp * g_tilde * dPidx) + Hp * (ddHpdxx * g_tilde * Pi + 2. * dHpdx * dg_tildedx * Pi + 2. * dHpdx * g_tilde * dPidx + Hp * ddg_tildedxx * Pi + 2. * Hp * dg_tildedx * dPidx + Hp * g_tilde * ddPidxx));
+      ST_array[index] = g_tilde;
+      // ST_array[index] = g_tilde * (Theta[0] + Psi + 1. / 4. * Pi) + exp(-tau) * (dPsidx - dPhidx) - 1. / (c * k) * (dHpdx * g_tilde * v_b + Hp * dg_tildedx * v_b + Hp * g_tilde * dv_bdx) + 3. / (4. * c * c * k * k) * (dHpdx * (dHpdx * g_tilde * Pi + Hp * dg_tildedx * Pi + Hp * g_tilde * dPidx) + Hp * (ddHpdxx * g_tilde * Pi + 2. * dHpdx * dg_tildedx * Pi + 2. * dHpdx * g_tilde * dPidx + Hp * ddg_tildedxx * Pi + 2. * Hp * dg_tildedx * dPidx + Hp * g_tilde * ddPidxx));
 
       // Polarization source
       if (Constants.polarization)
@@ -792,6 +793,7 @@ double Perturbations::get_Pi(const double x, const double k) const
 double Perturbations::get_Source_T(const double x, const double k) const
 {
   return ST_spline(x, k);
+  // return rec->g_tilde_of_x(x);
 }
 double Perturbations::get_Source_E(const double x, const double k) const
 {
@@ -943,5 +945,9 @@ extern "C"
   double Perturbations_get_Theta_p(Perturbations *pert, const double x, const double k, const double ell)
   {
     return pert->get_Theta_p(x, k, ell);
+  }
+  double Perturbations_get_source_T(Perturbations *pert, const double x, const double k)
+  {
+    return pert->get_Source_T(x, k);
   }
 }
