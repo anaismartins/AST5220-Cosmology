@@ -93,9 +93,10 @@ int main(int argc, char **argv)
   power.solve();
   printf("PowerSpectrum solved\n");
   power.output("output/data/cells.txt");
+  printf("PowerSpectrum outputted\n");
 
   // Remove when module is completed
-  return 0;
+  // return 0;
 
   Utils::EndTiming("Everything");
 }

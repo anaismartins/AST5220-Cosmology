@@ -35,7 +35,7 @@ private:
     //=====================================================================
 
     // Splines of bessel-functions for each value of ell in the array above
-    std::vector<Spline> j_ell_splines;
+    Spline2D j_ell_splines;
 
     // Generate splines of bessel-functions for each ell needed
     // to do the LOS integration
@@ -57,7 +57,7 @@ private:
 
     // Splines of the reusult of the LOS integration
     // Theta_ell(k) and ThetaE_ell(k) for polarization
-    std::vector<Spline> thetaE_ell_of_k_spline;
+    Spline2D thetaE_ell_of_k_spline;
 
     //=====================================================================
     // [3] Integrate to get power-spectrum
@@ -67,8 +67,8 @@ private:
     // For auto spectrum (C_TT) then call with f_ell = g_ell = theta_ell
     // For polarization C_TE call with f_ell = theta_ell and g_ell = thetaE_ell
     Vector solve_for_cell(
-        std::vector<Spline> &f_ell,
-        std::vector<Spline> &g_ell);
+        Spline2D &f_ell,
+        Spline2D &g_ell);
 
     // Splines with the power-spectra
     Spline cell_TT_spline{"cell_TT_spline"};
@@ -114,7 +114,8 @@ public:
         1400, 1450, 1500, 1550, 1600, 1650, 1700, 1750, 1800, 1850,
         1900, 1950, 2000};
 
-    std::vector<Spline> thetaT_ell_of_k_spline;
+    // std::vector<Spline> thetaT_ell_of_k_spline;
+    Spline2D thetaT_ell_of_k_spline;
 };
 
 extern "C"
@@ -130,6 +131,8 @@ extern "C"
     double PowerSpectrum_get_thetaT_ell_of_k(PowerSpectrum *ps, const double ell, const double k);
     double PowerSpectrum_get_cell_TT(PowerSpectrum *ps, const double ell);
     double PowerSpectrum_get_matter_power_spectrum(PowerSpectrum *ps, const double x, const double k_mpc);
+    double PowerSpectrum_get_cell_EE(PowerSpectrum *ps, const double ell);
+    double PowerSpectrum_get_cell_TE(PowerSpectrum *ps, const double ell);
 }
 
 #endif
