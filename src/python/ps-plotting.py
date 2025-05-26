@@ -5,9 +5,13 @@ import healpy as hp
 import matplotlib.pyplot as plt
 import numpy as np
 from BackgroundCosmology import BackgroundCosmology
+from matplotlib import rc
 from Perturbations import Perturbations
 from PowerSpectrum import PowerSpectrum
 from RecombinationHistory import RecombinationHistory
+
+# rc("text", usetex=True)
+rc("font", family="serif", size=16)
 
 t_start = time()
 
@@ -59,7 +63,8 @@ c = 2.99792458e8 * m / s
 
 ks = np.linspace(k_min, k_max, n_k)
 
-magic_ells = [6, 100, 200, 500, 1000]
+# magic_ells = [6, 100, 200, 500, 1000]
+magic_ells = [10, 100, 200, 500, 1000]
 thetaT = np.zeros((len(magic_ells), len(ks)))
 
 plt.figure(figsize=(10, 6))
@@ -68,14 +73,17 @@ for elli in range(len(magic_ells)):
     ell = magic_ells[elli]
     for ki in range(len(ks)):
         thetaT[elli, ki] = ps.get_thetaT_ell_of_k(ell, ks[ki])
-    plt.plot(ks * c / H0, thetaT[elli, :], label=f"$\ell$ = {ell}")
+    # plt.plot(ks * c / H0, thetaT[elli, :], label=f"$\ell$ = {ell}")
+    plt.plot(ks * eta0, thetaT[elli, :], label=f"$\ell$ = {ell}")
 plt.legend()
 plt.xlim(0, 600)
 plt.ylim(-0.015, 0.015)
 plt.ylabel(r"$\Theta_\ell$")
-plt.xlabel(r"$k c / H_0$")
+# plt.xlabel(r"$k c / H_0$")
+plt.xlabel(r"$k \eta_0$")
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/theta_ell_of_k.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/theta_ell_of_k.png",
+    bbox_inches="tight",
 )
 plt.close()
 
@@ -83,17 +91,25 @@ plt.close()
 plt.figure(figsize=(10, 6))
 for elli in range(len(magic_ells)):
     plt.plot(
-        c * ks / H0,
-        thetaT[elli, :] ** 2 * H0 / (ks * c),
+        # c * ks / H0,
+        # ks * eta0,
+        ks * Mpc / h,
+        # thetaT[elli, :] ** 2 * H0 / (ks * c),
+        thetaT[elli, :] ** 2 / (ks) / Mpc * h,
         label=f"$\ell$ = {magic_ells[elli]}",
     )
-plt.xlabel(r"$k c / H_0$")
-plt.ylabel(r"$\Theta_\ell^2 H_0/ (kc)$")
-plt.xlim(0, 600)
-plt.ylim(0, 3e-6)
+# plt.xlabel(r"$k c / H_0$")
+# plt.xlabel(r"$k \eta_0$")
+plt.xlabel(r"$k$ (h/Mpc)")
+# plt.ylabel(r"$\Theta_\ell^2 H_0/ (kc)$")
+plt.ylabel(r"$\Theta_\ell^2 / k$ (Mpc/h)")
+# plt.xlim(0, 600)
+# plt.ylim(1e10, 1e25)
+# plt.yscale("log")
 plt.legend()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/theta_ell2_of_k.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/theta_ell2_of_k.png",
+    bbox_inches="tight",
 )
 plt.close()
 
@@ -126,7 +142,8 @@ plt.xscale("log")
 plt.yscale("log")
 plt.legend()
 plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/matter_power_spectrum.png"
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/matter_power_spectrum.png",
+    bbox_inches="tight",
 )
 plt.close()
 
@@ -181,7 +198,11 @@ plt.ylabel(r"$\frac{\ell(\ell+1)C_\ell^{TT}}{2\pi}$ ($\mu K^2$)")
 plt.xscale("log")
 plt.ylim(-1000, 8000)
 plt.xlim(1, 3000)
-plt.show()
+plt.savefig(
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/power_spectrum_TT.png",
+    bbox_inches="tight",
+)
+plt.close()
 
 # check factor between curve and points
 factor = np.zeros(len(planck_ells))
@@ -218,7 +239,11 @@ plt.ylabel(r"$\frac{\ell(\ell+1)C_\ell^{EE}}{2\pi}$ ($\mu K^2$)")
 plt.xlim(0, 2500)
 plt.ylim(-20, 120)
 plt.legend()
-plt.show()
+plt.savefig(
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/power_spectrum_EE.png",
+    bbox_inches="tight",
+)
+plt.close()
 
 # plot TE power spectrum
 cell_TE = np.zeros(len(ells))
@@ -242,21 +267,34 @@ plt.ylabel(r"$\frac{\ell(\ell+1)C_\ell^{TE}}{2\pi}$ ($\mu K^2$)")
 plt.xlim(-500, 3000)
 plt.ylim(-150, 150)
 plt.legend()
-plt.show()
+plt.savefig(
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/power_spectrum_TE.png",
+    bbox_inches="tight",
+)
+plt.close()
 
 # plot maps
 alms = hp.sphtfunc.synalm(
     cls=cell_TT / ((ells * (ells + 1)) / (2.0 * np.pi)), lmax=2000
 )
 maps = hp.sphtfunc.alm2map(alms, nside=512, lmax=2000)
-cg.plot(maps, comp="cmb", min=-300, max=200, unit="uK")
+cg.plot(maps, comp="cmb", min=-300, max=300, unit="uK")
+plt.tight_layout()
+plt.savefig(
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/cmb_map_TT.png",
+    bbox_inches="tight",
+)
 
 alms = hp.sphtfunc.synalm(
     cls=cell_EE / ((ells * (ells + 1)) / (2.0 * np.pi)), lmax=2000
 )
 maps = hp.sphtfunc.alm2map(alms, nside=512, lmax=2000)
-cg.plot(maps, comp="cmb", min=-300, max=200, unit="uK")
-plt.show()
+cg.plot(maps, comp="cmb", min=-300, max=300, unit="uK")
+plt.tight_layout()
+plt.savefig(
+    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/cmb_map_EE.png",
+    bbox_inches="tight",
+)
 
 
 t_end = time()

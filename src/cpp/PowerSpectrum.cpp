@@ -275,13 +275,15 @@ double PowerSpectrum::get_cell_TT(const double ell) const
 double PowerSpectrum::get_cell_TE(const double ell) const
 {
   double normfactor = (ell * (ell + 1)) / (2.0 * M_PI) * pow(1e6 * cosmo->get_TCMB(), 2);
-  double prefactor = sqrt(tgamma(ell + 2 + 1) / tgamma(ell - 2 + 1));
+  // double prefactor = sqrt(tgamma(ell + 2 + 1) / tgamma(ell - 2 + 1));
+  double prefactor = sqrt((ell + 2) * (ell + 1) * (ell) * (ell - 1));
   return cell_TE_spline(ell) * normfactor * prefactor;
 }
 double PowerSpectrum::get_cell_EE(const double ell) const
 {
   double normfactor = (ell * (ell + 1)) / (2.0 * M_PI) * pow(1e6 * cosmo->get_TCMB(), 2);
-  double prefactor = sqrt(tgamma(ell + 2 + 1) / tgamma(ell - 2 + 1));
+  // double prefactor = sqrt(tgamma(ell + 2 + 1) / tgamma(ell - 2 + 1));
+  double prefactor = sqrt((ell + 2) * (ell + 1) * (ell) * (ell - 1));
   return cell_EE_spline(ell) * normfactor * prefactor * prefactor;
 }
 
