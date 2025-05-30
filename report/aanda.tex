@@ -57,11 +57,11 @@
   % {} leave it empty if necessary  
    {}
   % aims heading (mandatory)
-   {We have simulated the large scales of the universe, as well as the recombination and reionisation processes. We then perturbed the initial conditions of the Universe and propagated it through time.}
+   {We have simulated the large scales of the universe, as well as the recombination and reionisation processes. We then perturbed the initial conditions of the Universe and propagated it through time, in order to simulate the CMB power spectrum.}
   % methods heading (mandatory)
    {We use a Markov chain Monte Carlo to predict the densities of the different components of the Universe, as well as solving ordinary differential equations using a fourth-order Runge-Kutta method. For higher-order ODEs, we use line-of-sight integration.}
   % results heading (mandatory)
-   {We find the times of radiation-matter and matter-dark energy equality to be $x=-8.1319$ and $x=-0.25582$. Recombination happens at $x=-7.0$, while reionization happens at $x=-2.2$. Perturbations have an oscillatory behaviour that is dampened by the expansion of the Universe.}
+   {We find the times of radiation-matter and matter-dark energy equality to be $x=-8.1319$ and $x=-0.25582$. Recombination happens at $x=-7.0$. Perturbations have an oscillatory behaviour that is dampened by the expansion of the Universe. Our simulations of the power spectra agree with observations.}
   % conclusions heading (optional), leave it empty if necessary 
    {}
 
@@ -74,14 +74,13 @@
 \section{Introduction}
 
 \subsection{Background Cosmology}
-Since its discovery in 1964 \citep{1965ApJ...142..419P, 1965ApJ...142..414D}, the Cosmic Microwave Background (CMB) is still one of the biggest topics of interest in Cosmology today.
-As such, we are interested in simulating its power spectrum in order to fully understand how it looks like and how inflation might have looked like. It is useful to start with what the Universe looks like on large scales.
+Since its discovery in 1964 \citep{1965ApJ...142..419P, 1965ApJ...142..414D}, the Cosmic Microwave Background (CMB) is still one of the biggest topics of interest in Cosmology today. The CMB is a black-body radiation spectrum with very small anisotropies that we can observe that was originally released in the early Universe, once photons and matter decoupled and consequently, atoms were formed (and later, once some of these atoms were ionized).
 
-\hw{1.1 A bit brief. A bit more context would be good here.}
+We are interested in simulating the CMB power spectrum in order to fully understand how inflation might have looked like, as well as the recombination and reionization processes. It is useful to start with what the Universe looks like on large scales.
 
 \subsection{Recombination History}
 
-A significant event in the history of the Universe is recombination. In this process, the Universe goes from being made up of a tightly coupled plasma of charged particles to having its elements combine into atoms, mostly of Hydrogen and Helium. Photons interacting with atoms is a much less common and significant occurrence than with the previously common electrons and protons, thus making it possible for photons to travel freely and so the CMB is released, letting us observe it today.
+A significant event in the history of the Universe is recombination. In this process, the Universe goes from being made up of a tightly coupled plasma of baryons and photons to having its elements combine into atoms, mostly of Hydrogen and Helium. Photons interacting with atoms is a much less common and significant occurrence than with the previously common electrons and protons, thus making it possible for photons to travel freely and so the CMB is released, letting us observe it today.
 
 \begin{figure*}[ht]
 \caption{History of the Universe. Credit: NAOJ}             
@@ -94,6 +93,10 @@ A significant event in the history of the Universe is recombination. In this pro
 
 However, life is never that simple, and the Universe is not simply smooth. As such, we need to introduce perturbation theory by adding small perturbations to the initial conditions of our parameters and observing how they evolve until today.
 
+\subsection{Power Spectrum}
+
+With all the elements set up, all that is left to do is build power spectra for the CMB (temperature and polarization) and for matter. This is useful because these are observable quantities from CMB and galaxy survey experiments, meaning we will be able to compare our simulations to real data and verify if they agree.
+
 \section{Theoretical Background}
 
 \subsection{Background Cosmology}
@@ -104,16 +107,16 @@ ds^2 = -dt^2 + a^2(t)(dx^2 + dy^2 + dz^2),
 \end{equation}
 where $a(t)$ is the scale factor of the Universe, a measure for the rate of its expansion.
 
-We are interested in learning about the densities of the different components of the Universe at different points in time, from the Cosmic Microwave Background until the present day. The $\Lambda$CDM model assumes that the Universe is composed of matter (baryons\footnote{Baryons in this context refers to all "normal" matter, i.e. quarks, leptons (not including neutrinos for our purposes) and combinations of them.} and cold, dark matter (CDM)), radiation (photons and neutrinos) and dark energy. Another important notion for our model is that of curvature, which we already implicitly assumed to be 0 in the above equation, i.e. we are assuming a flat Universe. These components come together in the Friedman equation, which relates their density evolution to the expansion of the Universe:
+We are interested in learning about the densities of the different components of the Universe at different points in time, from the Cosmic Microwave Background until the present day. The $\Lambda$CDM model assumes that the Universe is composed of matter (baryons\footnote{Baryons in this context refers to all "normal" matter, i.e. quarks, leptons (not including neutrinos for our purposes) and combinations of them.} and cold, dark matter (CDM)), radiation (photons and massless neutrinos) and dark energy. Another important notion for our model is that of curvature, which we already implicitly assumed to be 0 in the above equation, i.e. we are assuming a flat Universe. These components come together in the Friedman equation, which relates their density evolution to the expansion of the Universe:
 \begin{equation}
 H(a) = H_0 \sqrt{\Omega_{M0}a^{-3} + \Omega_{R0}a^{-4} + \Omega_{k 0} a^{-2} + \Omega_{\Lambda 0}},
 \end{equation}
-where $H(a)$ is the so-called Hubble parameter and $H_0$ is the Hubble constant, measured experimentally today to be around 68.3 km s$^{-1}$ Mpc$^{-1}$ \citep{Kozmanyan_2019}. Each $\Omega_{i0}$ represents the density of one of the above-mentioned components in the present day, now explicitly including curvature $k$, and $\Omega_{M0} = \Omega_{b0} + \Omega_\text{CDM0}, \Omega_{R0} = \Omega_{\gamma0} + \Omega_{\nu0}$. The densities for photons and neutrinos today are given by
+where $H(a)$ is the so-called Hubble parameter and $H_0$ is the Hubble constant, whose value is contested and has been measured experimentally to be anywhere from 67 to 74 km/s/Mpc (\cite{hu2023hubbletensionevidencenew}). Each $\Omega_{i0}$ represents the density of one of the above-mentioned components in the present day, now explicitly including curvature $k$, and $\Omega_{M0} = \Omega_{b0} + \Omega_\text{CDM0}, \Omega_{R0} = \Omega_{\gamma0} + \Omega_{\nu0}$. The densities for photons and neutrinos today are given by
 \begin{align}
 \Omega_{\gamma 0} &= 2\cdot \frac{\pi^2}{30} \frac{(k_bT_{\rm CMB 0})^4}{\hbar^3 c^5} \cdot \frac{8\pi G}{3H_0^2},\\
 \Omega_{\nu 0} &= N_{\rm eff}\cdot \frac{7}{8}\cdot \left(\frac{4}{11}\right)^{4/3}\Omega_{\gamma 0},
 \end{align}
-whereas the densities for baryons and cold, dark matter are assumed to be, respectively, 0.05 and 0.267, the values given by \cite{2020}. The densities of all the components need to, of course, add up to one. We then find that 
+whereas the densities for baryons and CDM are assumed to be, respectively, 0.05 and 0.267, the values given by \cite{2020}. The densities of all the components need to, of course, add up to one. We then find that 
 $\Omega_{\Lambda 0} = 1 - (\Omega_{b 0}+\Omega_{\rm CDM 0}) - (\Omega_{\gamma 0} + \Omega_{\nu 0}) - \Omega_{k 0}$, where, assuming a flat universe, $\Omega_{k 0} = 0$.
 
 We can get the component densities for different scale factors from
@@ -139,12 +142,13 @@ It is handy to explore the Hubble parameter equations before introducing some ne
 Differentiating once more, we get
 \begin{alignat*}{2}
     \mathcal H'' &= \frac{d^2\mathcal H}{dx^2}&&\\ 
-    &= \mathcal H'\Bigg(1-&&\frac{1}{4}\left(\frac{e^xH_0}{\mathcal H(x)}\right)^5\\
-    & &&(3\Omega_{M0}e^{-3x}+4\Omega_{R0}e^{-4x}+2\Omega_{k0}e^{-2x})^2\\
-    & &&(9\Omega_{M0}e^{-3x}+16\Omega_{R0}e^{-4x}+4\Omega_{k0}e^{-2x})\Bigg)
+    %&= \mathcal H'\Bigg(1-&&\frac{1}{4}\left(\frac{e^xH_0}{\mathcal H(x)}\right)^5\\
+    %& &&(3\Omega_{M0}e^{-3x}+4\Omega_{R0}e^{-4x}+2\Omega_{k0}e^{-2x})^2\\
+    %& &&(9\Omega_{M0}e^{-3x}+16\Omega_{R0}e^{-4x}+4\Omega_{k0}e^{-2x})\Bigg).
+    &= \frac{H_0^2}{2\mathcal{H}}\left(-\Omega_{M0} e^{-x}-2\Omega_{R0}e^{-2x}+2\Omega_{\Lambda0}e^{2x}\right) \\&-\frac{H_0^4}{4\mathcal{H}^3}\left(\Omega_{M0}e^{-x}+4\Omega_{R0}e^{-2x}+4\Omega_{\Lambda0}e^{2x}\right)^2.
 \end{alignat*}
 
-It is now useful to define the notion of conformal time $\eta$, the distance the light has traveled since the Big Bang, taking into account the expansion of the Universe. A differential equation for $\eta$ can be written as
+It is now useful to define the notion of conformal time $\eta$, the distance the light has traveled since the Big Bang until a certain time $x$, taking into account the expansion of the Universe. A differential equation for $\eta$ can be written as
 \begin{align}
 \frac{d\eta}{dx} = \frac{da}{dx}\frac{d\eta}{da} = \frac{c}{\mathcal{H}}.
 \end{align}
@@ -154,13 +158,16 @@ From this, follow the definition of the co-moving distance $\chi$, the distance 
 \chi = \eta_0 - \eta
 \end{align}
 
-For a flat Universe, we can define the luminosity distance, i.e. given the intrinsic luminosity of a source and its flux, the distance to the source is
+We can define the luminosity distance, i.e. given the intrinsic luminosity of a source and its flux, the distance to the source is
+\begin{equation}
+d_L = \frac{d_A}{a^2},
+\end{equation}
+where $d_A = \frac{\chi}{1+z}$ is the angular diameter distance that defines the angular size of an object at redshift $z$.
 
+For a flat Universe, this reduces to
 \begin{equation}
     d_L = \frac{\chi}{a}.
 \end{equation}
-
-\hw{Eq. 11 is for a flat Universe only - you need this in general as this is what you implement.}
 
 A last useful notion before we get into some deductions is that of cosmic time $t$, which is given by solving
 \begin{align}
@@ -176,17 +183,15 @@ We can find the time of matter-radiation equality by equating $
 \Omega_b + \Omega_{\rm CDM} = \Omega_\gamma + \Omega_{\nu}$. Using \eqref{eq:omegas}, we find that
 
 \begin{equation}
-    a = \frac{\Omega_R}{\Omega_M}.
+    a = \frac{\Omega_{R0}}{\Omega_{M0}}.
 \end{equation}
-
-\hw{Eq. 13 It's OmegaR0 / OmegaM0 on the RHS. Same for Eq. 14}
 
 \subsubsection{Matter-Radiation Equality}
 
 Similarly, we find the time when matter and radiation are equally dense by equating $\Omega_b + \Omega_{\rm CDM} = \Omega_{\Lambda}$ and find that
 
 \begin{equation}
-    a = \sqrt[3]{\frac{\Omega_M}{\Omega_{\Lambda}}}
+    a = \sqrt[3]{\frac{\Omega_{M0}}{\Omega_{\Lambda0}}}
 \end{equation}
 
 \subsubsection{The Universe starts to accelerate}
@@ -197,11 +202,8 @@ In order to know when the Universe starts to accelerate, we must solve $\ddot a 
 \end{equation}
 where we know a handy expression for $\frac{dx}{dt}$ from \eqref{eq:t-ode} and we end up with
 \begin{equation}
-    \ddot a = H\mathcal{H'} = 0,
+    \ddot a = H\mathcal{H'} = 0.
 \end{equation}
-where ' denotes the derivative in terms of $x$.
-
-\hw{Eq. 16 has an analytical solution (only matter and dark energy is relevant in H at this point).}
 
 \subsection{Recombination History}
 
@@ -226,12 +228,12 @@ To calculate these, we need to know how the number density of electrons $n_e$ va
 These quantities are given by the Saha approximation in the first regime, which translates to the following system of equations, when considering the Universe after recombination is made up of hydrogen and helium:
 
 \begin{align}
-n_e\frac{x_{\rm He+}}{1-x_{\rm He+}-x_{\rm He++}} &= 2\left(\frac{m_eT_b}{2\pi}\right)^{3/2}e^{-\chi_0/T_b},\\
-n_e\frac{x_{\rm He++}}{x_{\rm He+}} &= 4\left(\frac{m_eT_b}{2\pi}\right)^{3/2}e^{-\chi_1/T_b},\\
-n_e\frac{x_{\rm H+}}{1-x_{\rm H+}} &= \left(\frac{m_eT_b}{2\pi}\right)^{3/2}e^{-\epsilon_0/T_b}, \label{eq:saha_h}
+n_e\frac{x_{\rm He+}}{1-x_{\rm He+}-x_{\rm He++}} &= 2\left(\frac{m_eT_b k_b}{2\pi\hbar^2}\right)^{3/2}e^{-\chi_0/(T_bk_b)},\\
+n_e\frac{x_{\rm He++}}{x_{\rm He+}} &= 4\left(\frac{m_eT_bk_b}{2\pi\hbar^2}\right)^{3/2}e^{-\chi_1/(T_bk_b)},\\
+n_e\frac{x_{\rm H+}}{1-x_{\rm H+}} &= \left(\frac{m_eT_bk_b}{2\pi\hbar^2}\right)^{3/2}e^{-\epsilon_0/(T_bk_b)}, \label{eq:saha_h}
 \end{align}
 
-where $x_X$ is the ratio between the number density of an ionised state of an element and the number density of the same element in any state, $m_e$ is the electron mass, $T_b = T_\text{CMB0}/a$ is the baryon temperature and $\chi_0$, $\chi_1$ and $\epsilon_0$ are the ionisation energies of neutral helium, singly ionised helium and hydrogen, respectively.
+where $x_X$ is the ratio between the number density of an ionized state of an element and the number density of the same element in any state, $m_e$ is the electron mass, $T_b = T_\text{CMB0}/a$ is the baryon temperature and $\chi_0$, $\chi_1$ and $\epsilon_0$ are the ionization energies of neutral helium, singly ionized helium and hydrogen, respectively.
 
 In the second regime, we can use the Peebles equation in order to describe these quantities, which is given by the following Ordinary Differential Equation (ODE):
 \begin{equation}
@@ -242,19 +244,19 @@ where
 \begin{align}
 C_r(T_b) &= \frac{\Lambda_{2s\rightarrow1s} + \Lambda_{\alpha}}{\Lambda_{2s\rightarrow1s} + \Lambda_{\alpha} + \beta^{(2)}(T_b)},\\
 \Lambda_{2s\rightarrow1s} &= 8.227 \textrm{s}^{-1},\\
-\Lambda_{\alpha} &= H\frac{(3\epsilon_0)^3}{(8\pi)^2 n_{1s}},\\
+\Lambda_{\alpha} &= H\frac{(3\epsilon_0)^3}{(8\pi)^2 n_{1s}(\hbar c)^3},\\
 n_{1s} &= (1-X_e)n_H,\\
 n_H &= (1-Y_p)\frac{3H_0^2\Omega_{b0}}{8\pi G m_H a^3},\\
-\beta^{(2)}(T_b) &= \beta(T_b) e^{3\epsilon_0/4T_b},\\
-\beta(T_b) &= \alpha^{(2)}(T_b) \left(\frac{m_eT_b}{2\pi}\right)^{3/2} e^{-\epsilon_0/T_b},\\
-\alpha^{(2)}(T_b) &= \frac{64\pi}{\sqrt{27\pi}}\frac{\alpha^2}{m_e^2}\sqrt{\frac{\epsilon_0}{T_b}}\phi_2(T_b),\\
-\phi_2(T_b) &= 0.448\ln(\epsilon_0/T_b),
+\beta^{(2)}(T_b) &= \beta(T_b) e^{3\epsilon_0/(4T_bk_b)},\\
+\beta(T_b) &= \alpha^{(2)}(T_b) \left(\frac{m_eT_bk_b}{2\pi\hbar^2}\right)^{3/2} e^{-\epsilon_0/(T_bk_b)},\\
+\alpha^{(2)}(T_b) &= \frac{64\pi}{\sqrt{27\pi}}\frac{\alpha^2}{m_e^2}\sqrt{\frac{\epsilon_0}{T_bk_b}}\phi_2(T_b)\frac{\hbar^2}{c},\\
+\phi_2(T_b) &= 0.448\ln(\epsilon_0/(T_bk_b)),
 \end{align}
 $\alpha$ is the fine-structure constant, and $Y_p$ is the primordial helium mass fraction, whose fiducial value is 0.245.
 
 In order to include the process of reionization, which is part of the Universe's timeline in this regime, in our simulation, we need to include a couple more terms in our equation for the fractional electron density $X_e$:
 \begin{align}
-X_e &= X_e^{\rm Peebles}\nonumber\\ &+ \frac{1+f_{\rm He}}{2}\left(1+\tanh\frac{y_{\rm reion}-y}{\Delta y_{\rm reion}}\right)\\ &+ \frac{f_{\rm He}}{2}\left(1 + \tanh \frac{z_{\rm He reion}-z}{\Delta z_{\rm He reion}}\right)\nonumber
+X_e &= X_e^{\rm Peebles}\nonumber\\ &+ \frac{1+f_{\rm He}}{2}\left(1+\tanh\frac{y_{\rm reion}-y}{\Delta y_{\rm reion}}\right)\\ &+ \frac{f_{\rm He}}{2}\left(1 + \tanh \frac{z_{\rm He reion}-z}{\Delta z_{\rm He reion}}\right)\nonumber.
 \end{align}
 
 We are particularly interested in finding the time the last scattering happened, as well as recombination, which happened around the same time, i.e. a process called decoupling. The time of the last scattering can be defined as when the optical depth $\tau=1$, as that is the time the medium becomes transparent and CMB photons can travel until today. At the same time, recombination can be defined as when the fractional electron density $X_e = 0.1$.
@@ -263,8 +265,6 @@ Another interesting quantity to look at is the sound horizon -- the distance a s
 \begin{equation}
     s(x) = \int_0^{a} \frac{c_s dt}{a} = \int_{-\infty}^{x} \frac{c_s dx}{\mathcal{H}} \to \frac{ds(x)}{dx} = \frac{c_s}{\mathcal{H}}.
 \end{equation}
-
-\hw{Theory is fine. Your equations have no c,hbar,$k_b$ etc in this section (while for background cosmology you do include this).}
 
 \subsection{Perturbations}
 
@@ -354,8 +354,12 @@ At later times, photons and baryons decouple. As such, we need to define a new e
 &\Phi^\prime =&& \Psi - \frac{c^2k^2}{3\mathcal{H}^2} \Phi + \frac{H_0^2}{2\mathcal{H}^2}
 \Bigl[\Omega_{\rm CDM 0} a^{-1} \delta_{\rm CDM} + \Omega_{b 0} a^{-1} \delta_b + \\& &&4\Omega_{\gamma 0}
 a^{-2}\Theta_0 + 4\Omega_{\nu 0}a^{-2}\mathcal{N}_0\Bigr], \\
-&\Psi =&& -\Phi - \frac{12H_0^2}{c^2k^2a^2}\left[\Omega_{\gamma 0}\Theta_2 + \Omega_{\nu 0}\mathcal{N}_2\right].
+&\Psi =&& -\Phi - \frac{12H_0^2}{c^2k^2a^2}\left[\Omega_{\gamma 0}\Theta_2 + \Omega_{\nu 0}\mathcal{N}_2\right],
 \end{align*}
+where
+\begin{equation}\label{eq:pi}
+\Pi= \Theta_2 + \Theta_0^P + \Theta_2^P.
+\end{equation}
 
 Lastly, we also need to set initial conditions for this system. As this follows right after the tight coupling regime ends, we can use the last results for each previously calculated quantity as the initial conditions for the same quantities. For the quantities that are not observed in tight coupling, but are now observed in this new regime, we use the following initial conditions:
 
@@ -368,23 +372,63 @@ Lastly, we also need to set initial conditions for this system. As this follows 
 &\Theta_\ell^P = -\frac{\ell}{2\ell+1} \frac{ck}{\mathcal{H}\tau^\prime} \Theta_{\ell-1}^P.
 \end{align*}
 
+\subsection{Power Spectrum}
+
+The CMB power spectrum is given by
+\begin{equation}  
+C_\ell = 4\pi \int_0^{\infty} A_s \left(\frac{k}{k_{\rm pivot}}\right)^{n_s-1} \Theta_\ell^2(k) \frac{dk}{k},
+\end{equation}
+where $A_s$, $k_\text{pivot}$ and $n_s$ are simulation parameters, which we set as 2.1$\times10^{-9}$, 0.05 Mpc$^{-1}$ and 0.965 respectively. $\Theta_\ell(k)$ we know from our previous calculations. However, in order to plot a full power spectrum at relevant scales, we would want to look at $\ell$s of at least 1000. In theory, we could do this by simply setting our $\ell_\text{max}$ to be whatever we want it to be.
+
+In practice, solving higher-than-first order ODEs computationally works virtually the same way as solving first order ones. However, for our equation system after photons decouple, we would have to solve a system with an infinitely large number of equations, which is of course not possible, so we would need to make use of approximations. This is where it is useful to implement a method called line-of-sight integration, developed by \citeauthor{1996ApJ...469..437S}. In this, instead of expanding the differential equation for the photon temperature perturbation into multipoles like we did before, we first integrate it from the beginning of the Universe until today by making use of an integrating factor, and only afterwards taking the multipoles. As such, we end up with a very simple equation for $\Theta_\ell(k)$:
+\begin{equation}
+\Theta_\ell(k, x=0) = \int_{-\infty}^{0} \tilde{S}(k,x) j_\ell[k(\eta_0-\eta)] dx,
+\end{equation}
+where $j_\ell$ are the spherical Bessel functions and $\tilde{S}(k,x)$ are the temperature or polarization source functions.
+
+The temperature source function is given as follows:
+\begin{align}
+\tilde{S}(k,x) =& \tilde{g}\left[ \Theta_0 + \Psi + \frac{1}{4}\Pi\right] + e^{-\tau} \left[\Psi^\prime-\Phi^\prime\right] -
+\frac{1}{ck}\frac{d}{dx}(\mathcal{H}\tilde{g}v_b) \nonumber\\&+ \frac{3}{4c^2k^2} \frac{d}{dx}
+\left[\mathcal{H}\frac{d}{dx} (\mathcal{H}\tilde{g}\Pi)\right],
+\end{align}
+where each term represents a different physical effect.
+
+In the first term, we integrate the CMB monopole $\Theta_0$, weighted by the visibility function $\tilde g$, along the line of sight, and add two corrections: one relating to the gravitational potential $\Psi$ and a quadrupolar and polarization correction. The second term is due to the integrated Sachs-Wolfe effect, which dictates that photons moving through an evolving gravitational well will leave with more energy than they came with. The third term is added because of the Doppler effect. And the fourth and last term is added because Thomson scattering is angular dependent and thus photons are more likely to be scattered in certain directions.
+
+The E-mode polarization source function is given by
+\begin{equation}
+S_E(k,x) = \frac{3g\Pi}{4k^2(\eta_0-\eta)^2},
+\end{equation}
+with the addition of an $\ell$-dependent factor of $
+\sqrt{\frac{(\ell+2)!}{(\ell-2)!}}$, which we add directly to the equation for $\Theta_\ell$.
+
+Lastly, we want to calculate the matter power spectrum, which is given by
+\begin{equation}
+P(k,x) = |\Delta_M(k,x)|^2P_{\rm primordial}(k),
+\end{equation}
+where
+\begin{equation}
+\Delta_M(k,x) \equiv \frac{c^2k^2\Phi(k,x)}{\frac{3}{2}\Omega_{M 0} a^{-1} H_0^2}
+\end{equation}
+and
+\begin{equation}
+    P_{\rm primordial}(k) = A_s \left(\frac{k}{k_{\rm pivot}}\right)^{n_s-1}\frac{2\pi^2}{k^3}.
+\end{equation}
+
 \section{Implementation, numerical methods and tests}
 
-We now want to use the previously presented equations in order to compute the relevant quantities over different scale factors. The code to reproduce this simulation is available at \url{https://github.com/anaismartins/AST5220-Cosmology}. For more readable but still fast calculations, these were written in Python (\texttt{src/python}) with equations ported from C++ (\texttt{src/cpp}) using \texttt{ctypes} \citep{ctypes}.
+We now want to use the previously presented equations in order to compute the relevant quantities over different scale factors. The code to reproduce this simulation is available at \url{https://github.com/anaismartins/AST5220-Cosmology}. For more readable but still fast calculations and plotting, these were written in Python (\texttt{src/python}) with equations ported from C++ (\texttt{src/cpp}) using \texttt{ctypes} \citep{ctypes}.
 
 \subsection{Background Cosmology}
 
 \subsubsection{Solving ODEs}
 
-In particular, we have two important quantities defined by ordinary differential equations (ODEs), the conformal time $\eta$ and the cosmic time $t$. In order to solve them, we use a fourth order Runge-Kutta method, followed by splining the results over a relevant range, which, in our case, was chosen to be from $x=\log(10^{-8})$ until today ($x=0$).
-
-\hw{3.1.1 Also good to specify how many (linear-spaced in x) point you use.}
+In particular, we have two important quantities defined by ODEs, the conformal time $\eta$ and the cosmic time $t$. In order to solve them, we use a fourth order Runge-Kutta method, followed by splining the results over a relevant range, which, in our case, was chosen to be from $x=-15$ until today ($x=0$), using 1000 linearly spaced points.
 
 \subsubsection{Markov Chain Monte Carlo Sampling}
 
-We are interested in finding the value of the Hubble constant $H_0$, as well as the densities of the components of the Universe. To do this, we run a Markov chain Monte Carlo (MCMC) method, sampling $h = \frac{H_0}{100\text{ km s}^{-1}\text{ Mpc}^{-1}}$ (the dimensionless Hubble constant), $\Omega_M$ and $\Omega_k$ from data from supernova type IA observations \citep{Betoule_2014}.
-
-\hw{3.1.2 OmegaM0 and OmegaK0.}
+We are interested in finding the value of the Hubble constant $H_0$, as well as the densities of the components of the Universe. To do this, we run a Markov chain Monte Carlo (MCMC) method, sampling $h = \frac{H_0}{100\text{ km s}^{-1}\text{ Mpc}^{-1}}$ (the dimensionless Hubble constant), $\Omega_{M0}$ and $\Omega_{k0}$ from data from supernova type IA observations \citep{Betoule_2014}.
 
 \subsection{Recombination History}
 
@@ -398,19 +442,19 @@ We are not able to solve the Peebles ODE in the early Universe as it is numerica
 
 \subsection{Perturbations}
 
-\subsubsection{Solving higher order ODEs}
-
-In practice, solving higher-than-first order ODEs computationally works virtually the same way as solving first order ones. However, for our equation system after photons decouple, we would have to solve a system with an infinitely large number of equations, which is of course not possible, so we would need to make use of approximations. A method called line-of-sight integration, developed by \citeauthor{1996ApJ...469..437S}, allows us so set a relatively low $\ell_{\textrm{max}}$ while not needing to do approximations.
-
 \subsubsection{Propagating perturbations through two different regimes}
 
-The full system of equations is very stiff at early times, which makes it so that we have to split the time into to two regimes. As such, we first solve the tight coupling system of equations, between some $x_\textrm{min}$ until around $x = -8.3$. When the ODE system is solved, we take the final value for each of the simulated quantities and use it as an initial condition for solving the second ODE system of equations.
+The full system of perturbation equations is very stiff at early times, which makes it so that we have to split the time into to two regimes. As such, we first solve the tight coupling system of equations, between some $x_\textrm{min}$ until around $x = -8.3$. When the ODE system is solved, we take the final value for each of the simulated quantities and use it as an initial condition for solving the second ODE system of equations.
+
+\subsection{Power Spectrum}
+
+\subsubsection{Trapezoidal integration}
+
+In order to calculate the power spectra, we need to perform many computationally expensive integrations. However, a simple trapezoidal integration is accurate enough for our applications and cuts significant computational time. In particular, we use $\Delta x = 0.05$ for the line of sight integration and $\Delta \log k = \frac{2\pi}{6\eta_0 k_\text{max}}$ for integrating $C_\ell$, with $k_\text{max} = 3000 / \eta_0$.
 
 \section{Results}
 
 \subsection{Background Cosmology}
-
-\hw{Plots: the plots barely show anything in the radiation dominated era. I would put the $x_min$ for the plots to be atleast -15 so that you show the full evolution.}
 
 According to our simulations, the densities of the different components of the Universe evolve as shown in Figure \ref{fig:Omegas}. This results in the scaled Hubble parameter shown in Figure \ref{fig:Hp}. The vertical lines in each of these figures represent relevant points in time, and the values for each of these are shown in Table \ref{table:times}. The analytical calculations that give the values in the table seem to agree with the curves derived from simulations in the figures, demonstrating trustworthy results.
 
@@ -455,7 +499,7 @@ It is also useful to look at the derivatives of $\mathcal H$ as well as the conf
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/ddHpddx_over_Hp.pdf}
-  \caption{Evolution of the second derivative of the scaled Hubble parameter over the scaled Hubble parameter as a function of the logarithm of the scale factor. \hw{Fig 4 is wrong. This is not H’’/H but seems to be just H or H’’.}}
+  \caption{Evolution of the second derivative of the scaled Hubble parameter over the scaled Hubble parameter as a function of the logarithm of the scale factor.}
      \label{fig:ddhpddx}
 \end{figure}
 
@@ -471,40 +515,34 @@ As a sanity check, it is also good to look at the trends in the conformal and co
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/eta_over_c.pdf}
-  \caption{Conformal time as a function of the logarithm of the scale factor. \hw{Fig 6 Missing units on y-axis.}}
+  \caption{Conformal time as a function of the logarithm of the scale factor.}
      \label{fig:eta}
 \end{figure}
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/t.pdf}
-  \caption{Cosmic time as a function of the logarithm of the scale factor. \hw{Fig 7 Missing units on y-axis.}}
+  \caption{Cosmic time as a function of the logarithm of the scale factor.}
      \label{fig:t}
 \end{figure}
 
-An interesting result is comparing our model to the data from \cite{Betoule_2014} by looking at the luminosity distance measure in Figure \ref{fig:dL}.
+An interesting result is comparing our model to the data from \cite{Betoule_2014} by looking at the luminosity distance measure in Figure \ref{fig:dL}. We see that our model has the same shape as the data, but it does not match completely, especially at lower redshifts.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/dL.pdf}
-  \caption{Luminosity distance as a function of the logarithm of the scale factor. Our model is represented as the blue curve and the date is represented as the orange circles with their respective error bars. \hw{Fig 8 Hard to see if the line goes through the data points or now. Here scaling the line and data (e.g. $d_L$ / z or similar) can help.}}
+  \caption{Luminosity distance scaled by redshift as a function of redshift. Our model is represented as the blue curve and the data is represented as the orange circles with their respective error bars.}
      \label{fig:dL}
 \end{figure}
 
-We now want to take a look at our MCMC fits. In Figure \ref{fig:fitting}, we can see the 1$\sigma$ prediction for the value of the densities of matter and dark energy. Our predictions agree with a flat Universe. Lastly, we have a 1$\sigma$ posterior prediction for the Hubble constant as shown in Figure \ref{fit:hist} around 70 km s$^{-1}$ Mpc$^{-1}$, which does not span to the Planck best-fit value. This might be because our model is not intricate enough yet to describe the Universe. However, it is still fairly close to the values predicted by different recent experiments.
-
-\hw{“This might be because our model is not intricate enough yet to describe the Universe. However, it is still fairly close to the values predicted by different recent experiments.”  See \url{https://cmb.wintherscoming.no/theory_background.php#tension}}
+We now want to take a look at our MCMC fits. In Figure \ref{fig:fitting}, we can see the 1$\sigma$ prediction for the value of the densities of matter and dark energy. For a flat Universe, we predict that $\Omega_M \approx0.3$ and $\Omega_\Lambda\approx0.7$. Lastly, we have a 1$\sigma$ posterior prediction for the Hubble constant as shown in Figure \ref{fit:hist} around 70 km s$^{-1}$ Mpc$^{-1}$, which does not span to the Planck best-fit value, but is within legacy results for the Hubble constant calculated by other methods.
 
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\hsize]{figures/fitting.pdf}
-  \caption{1$\sigma$ prediction for the densities of matter and dark energy. \hw{Fig 9 is wrong due to the bug mentioned below (line 201). You get that OmegaLambda = 0 is allowed which it should not be.}}
+  \caption{Constraints on the present-day density parameters for matter ($\Omega_M$) and dark energy ($\Omega_\Lambda$). The shaded region represents 1$\sigma$ confidence interval, indicating the most probable values for these parameters based on our MCMC fit. The black dashed line indicates where the densities would lie in a flat Universe, where, at later times, $1 = \Omega_M + \Omega_\Lambda$.}
      \label{fig:fitting}
 \end{figure}
-
-\hw{Describe better what is shown in the caption.}
-
-\hw{Fig 3 and 4. Here you can compare this to analytically expected values in different regimes to validate your results.}
 
 \begin{figure}[ht]
 \centering
@@ -547,16 +585,11 @@ Calculating the fractional energy density until today, we find Figure \ref{fig:X
 Last scattering   & -6.9901  & 1084.8  & 0.37478 \\
 Recombination & -6.9701 & 1063.3 & 0.38758                 \\
 Recombination (according to Saha) & -7.1403 & 1260.9 & 0.29069\\
-Reionisation & -2.2014 & 8.0377 & 633.34\\
 \hline                  
 \end{tabular}
 \end{table*}
 
-\hw{In table 2 “Reionisation” you also compute when reionization is. Is this using Xe = 0.1 as for recombination? Just asking as the time for when reionisation should be is basically an input parameter to our reionisation model}
-
 The optical depth $\tau$ (blue) and its first (orange, times -1) and second (green) derivatives w.r.t. $x$ over time $x$ are shown in Figure \ref{fig:tau}. We can see that the optical depth in the early Universe is very large, meaning the photon-baryon plasma is an optically thick medium, where no light can be transmitted. The time of the last scattering is pointed out by the black vertical dashed line, defined by $\tau=1$. After this point, the optical depth is lower than one stable until reionisation, and thereafter it starts decreasing again, meaning photons are able to travel through the medium since recombination until today.
-
-\hw{Around -8.5 to -8.0...  at around 0.00026736”  x = -8.5, … $X_e$ = 0.00026…“(orange, times -1)” Just (orange) is fine here, the label/caption explains the details.}
 
 \begin{figure}[ht]
     \centering
@@ -570,7 +603,7 @@ One last useful visualization is Figure \ref{fig:gtilde}, where we look at the v
 \begin{figure}[ht]
     \centering
     \includegraphics[width=\hsize]{report/figures/gtilde.pdf}
-    \caption{Visibility function $\tilde g$ (blue) and its first (orange) and second (green) derivatives w.r.t. $x$ over time. All are normalized. \hw{“All are normalized.” How are they normalized? The label says it’s just g, g’, g’’.}}
+    \caption{Visibility function $\tilde g$ (blue) and its first (orange) and second (green) derivatives, peak normalised, w.r.t. $x$ over time.}
     \label{fig:gtilde}
 \end{figure}
 
@@ -580,21 +613,21 @@ We can calculate the distance a sound-wave can propagate through the photon-bary
 
 Let us now take a look at how our quantities of interest evolve with time.
 
-First, we look at the density perturbations in Figure \ref{fig:densities}. In all of the panels, we can see that the quantities are constant up until a certain time. Each scale starts diverging from this constant value at a different time, the time each of them entering the horizon, with the smallest scale, naturally, being the first to enter the horizon and be able to interact gravitationally. After this, the photon and neutrino overdensities start oscillating. This happens because, as time goes on, the perturbations tend to "fall into themselves", i.e. be affected by gravitational attraction and become bigger. At the same time, their pressure has the opposite effect and, as overdensities get to a certain density, pressure makes them become less dense again, and this happens repeatedly, being damped by the expansion of the Universe, until their density starts tending to a specific value. This is smaller/larger for smaller/larger scales. CDM, on the other hand, does not interact, and thus does not go through these oscillations. For baryons, the same oscillatory behavior happens, but is quickly dominated by the effect of the denser CDM, and tends to its same density.
+First, we look at the density perturbations in Figure \ref{fig:densities}. In all of the panels, we can see that the quantities are constant up until a certain time. Each scale starts diverging from this constant value at a different time, the time each of them entering the horizon, with the smallest scale, naturally, being the first to enter the horizon and be able to interact gravitationally. Once inside the horizon, pressure and gravitational forces come into play. The photon and neutrino overdensities begin to oscillate due to this interplay: gravitational attraction causes overdensities to grow, while radiation pressure resists compression, producing acoustic oscillations. These oscillations are gradually dampened by the Universe’s expansion. The amplitude and behavior of these oscillations vary by scale, with smaller scales exhibiting more rapid and earlier oscillations. CDM, on the other hand, does not interact, and thus does not go through these oscillations. For baryons, the same oscillatory behavior happens, as, before recombination, baryons are tightly coupled to photons through Thomson scattering, forming a photon-baryon fluid. After recombination, baryons are no longer supported by radiation pressure and instead begin to fall into the gravitational potential wells formed by CDM clusters.
 
-\begin{figure*}[htp]
+\begin{figure*}[ht]
   \centering
   \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/delta_gamma.png}}\quad
   \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/delta_cdm_delta_b.png}}\quad
   \subfigure[]{\includegraphics[width=0.32\hsize
 ]{report/figures/delta_nu.png}}
-\caption{Density perturbations $\delta$ over time. Each panel shows the evolution of the photon overdensity (a), CDM (solid) and baryon (dashed) overdensity (b) and neutrino overdensity (c). Each of the colored curves shows a different scale from biggest ($k = 0.001$ Mpc$^{-1}$, blue) to smallest ($k=0.1$ Mpc$^{-1}$, green).}
+\caption{Density perturbations $\delta$ over time. Each panel shows the evolution of the photon overdensity (a), CDM (solid) and baryon (dashed) overdensity (b) and neutrino overdensity (c). Each of the colored curves shows a different scale from biggest ($k = 0.001$ Mpc$^{-1}$, blue) to smallest ($k=0.1$ Mpc$^{-1}$, green). \hw{Fig 16b,17b. Minor thing: Maybe use | delta$_b$ |, | v$_b$ | so that one sees the missing oscillations (where these things are negative).}}
 \label{fig:densities}
 \end{figure*}
 
-The evolution of the perturbation velocities is shown in Figure \ref{fig:velocities} and the shape of the curves is explained by the same physics, as well as the photon and neutrino quadrupole in Figure \ref{fig:theta2-nu2}. The photon quadrupole has a slightly different behavior, as the modes all start oscillating at the same time, once photons decouple, as this quantity is not relevant before then.
+The evolution of the perturbation velocities is shown in Figure \ref{fig:velocities} and the shape of the curves is explained by the same physics. Photons and neutrinos exhibit oscillatory velocity perturbations, just like their density counterparts. CDM, lacking pressure support, exhibits little oscillatory behavior, while baryons again follow the photons prior to recombination due to tight coupling, and afterward begin to follow CDM.
 
-\begin{figure*}[htp]
+\begin{figure*}[ht]
   \centering
   \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/v_gamma.png}}\quad
   \subfigure[]{\includegraphics[width=0.32\hsize]{report/figures/v_cdm_v_b.png}}\quad
@@ -603,6 +636,8 @@ The evolution of the perturbation velocities is shown in Figure \ref{fig:velocit
 \caption{Velocity perturbations $v$ over time. Each panel shows the evolution of the photon perturbation velocity (a), CDM (solid) and baryon (dashed) perturbations velocity (b) and neutrino perturbation velocity (c). Each of the colored curves shows a different scale from biggest ($k = 0.001$ Mpc$^{-1}$, blue) to smallest ($k=0.1$ Mpc$^{-1}$, green).}
 \label{fig:velocities}
 \end{figure*}
+
+Figure \ref{fig:theta2-nu2} shows the evolution of the photon and neutrino quadrupoles, which, once again, can be largely explained by the same physics. The photon quadrupole, however, has a slightly different behavior than described before, as the modes all start oscillating at the same time, once photons decouple, as before that, frequent Thomson scattering suppresses higher moments. Neutrinos, which decouple much earlier, begin developing a quadrupole much sooner.
 
 \begin{figure}[ht]
     \centering
@@ -620,7 +655,7 @@ Figure \ref{fig:potentials} shows the evolution of the metric potentials $\Phi$,
     \label{fig:potentials}
 \end{figure}
 
-Lastly, we take a look at how polarization evolves over time in Figure \ref{fig:thetap}. The same dampened oscillatory behavior is present as in the temperature perturbations, but here we can see that the scale is irrelavant for when the modes start oscillating, as polarization is only relevant after photons decouple, as similarly seen for the temperature quadrupole.
+Lastly, we take a look at how polarization evolves over time in Figure \ref{fig:thetap}. The same dampened oscillatory behavior is present as in the temperature perturbations, but here we can see that the scale is irrelevant for when the modes start oscillating, as polarization is only relevant after photons decouple, as similarly seen for the temperature quadrupole.
 
 \begin{figure*}[ht]
     \centering
@@ -631,6 +666,113 @@ Lastly, we take a look at how polarization evolves over time in Figure \ref{fig:
     \label{fig:thetap}
 \end{figure*}
 
+\subsection{Power Spectrum}
+
+Let us first take a look at what $\Theta_l$ that we generated via line of sight integration look like in Figure \ref{fig:thetaell}, where the $x$-axis is presented in unitless coordinates $k\eta_0$. We see the oscillations introduced by the spherical Bessel functions $j_\ell$, which start only when $\ell\sim k\eta_0$ (in particular, we see that the curve for $\ell=1000$ does not even start oscillating within the limits we are looking at), used as a consistency check.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{report/figures/theta_ell_of_k.png}
+    \caption{Photon multipoles $\Theta_\ell$ for different $\ell$s (respectively, 6, 100, 200, 500 and 1000 in blue, orange, green, red and purple) over wavenumber multiplied by the conformal time today $k\eta_0$.}
+    \label{fig:thetaell}
+\end{figure}
+
+We see a similar oscillatory pattern when looking at the full integrand for $C_\ell$, $\Theta_\ell^2/k$, plotted in Figure \ref{fig:integrand}, where the oscillations also start around $\ell\sim k\eta_0$.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{report/figures/theta_ell2_of_k.png}
+    \caption{Integrand of $C_\ell$, $\Theta_\ell^2/k$, for different $\ell$s (respectively, 6, 100, 200, 500 and 1000 in blue, orange, green, red and purple) over wavenumber multiplied by the conformal time today $k\eta_0$.}
+    \label{fig:integrand}
+\end{figure}
+
+Finally, we can go over the main results of the present paper: the simulated power spectra compared to observations, as well as maps of the sky. We start by presenting the CMB temperature power spectrum in Figure \ref{fig:ps-tt}. The power spectrum is presented as $\frac{\ell(\ell+1)C_\ell^\text{TT}}{2\pi}$ in order to evidence the low-$\ell$ plateau. We can see that our simulations and the data agree well. It is now interesting to look at what each feature in the power spectrum means physically.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{report/figures/power_spectrum_TT.png}
+    \caption{CMB temperature power spectrum. The theoretical curve is presented in blue and observations from \cite{2020} are presented in orange with their respective error bars. The power spectrum is presented as $\frac{\ell(\ell+1)C_\ell^\text{TT}}{2\pi}$ and the $x$-axis is in logscale in order to evidence the low-$\ell$ plateau.}
+    \label{fig:ps-tt}
+\end{figure}
+
+Starting at the low-$\ell$s, we can observe there is a plateau until around $\ell\sim20$, called the Sachs-Wolfe plateau, because we can approximate the photon multipole equation by the first term. We see it as a plateau because the spectral index $n_s$ used for our simulations (and measured in experiments) is very close to one ($n_s=0.965$). If we look closely, we can actually tell that it tilts slightly up at lower $\ell$s, as $n_s$ is smaller than one. However, as we can also tell by the large error bars, there is a large uncertainty in this regime, called the cosmic variance. This happens because large-scale measurements are affected by measurement position, and we are limited by where we can make measurements in.
+
+The Sachs-Wolfe plateau is followed by a peak at around $\ell\sim 200$. The position of this peak in a flat Universe is determined by
+\begin{equation}
+\ell \sim \pi \frac{\eta_0 - \eta_{\rm rec}}{r_s},
+\end{equation}
+meaning it depends on the sound horizon at decoupling $r_s$ and the angular diameter distance $D_A(a_\text{rec}) = \frac{\eta_0-\eta_\text{rec}}{a_\text{rec}}$, which, themselves depend, respectively, on baryon density, which affects sound speed, and (mainly or most illustratively) on curvature, as adding curvature to the model makes the spots in the CMB appear larger or smaller than they would be at flat space.
+
+As for the amplitudes of the peaks in the spectrum (most significantly, the first, second and third ones) and specifically their relative amplitudes, the most significant contributers are the baryon $\Omega_{b0}h^2$ and matter $\Omega_{M0}h^2$ densities. A higher baryon density will lead to a more significant baryon loading effect, which implies that $\Theta_\ell$ will not oscillate around zero (which can already be seen in Figure \ref{fig:thetaell}), but instead a negative term is added. Consequently, the even peaks (where the $\cos$ term in the spherical Bessel functions is positive) will be dampened and the odd peaks (where the same term is negative) will be enhanced). On the other hand, increasing matter density will decrease the radiation driving effect. This effect is caused by modes that enter the horizon during the radiation-dominated era, where gravitational potentials decay since radiation cannot cluster fast enough to fight the expansion of the Universe. As such, modes start oscillating, but then stop, as there is no significant gravitational potential, and thus the amplitude increases. With higher matter density, there is more gravity and thus potentials decay slower, damping the amplitude.
+
+A last big defining feature of the CMB power spectrum is the so-called damping tail at $\ell\gtrsim800$. This feature is mainly affected by the diffusion damping effect. A photon moves $\lambda = \frac{1}{n_e\sigma_T}$ in between scattering from baryons and it scatters $N = \frac{n_e\sigma_T}{H}$ times in one Hubble time $H^{-1}$. As such, a photon on a random walk will, on average, travel, in one Hubble time,
+\begin{equation} \label{eq:diffusion-length}
+D = \frac{1}{n_e\sigma_T} \cdot \sqrt{\frac{n_e\sigma_T}{H}}.
+\end{equation}
+Perturbations at scales smaller than $D$ are negligible and simply seen as diffusing photons. Decreasing baryon density decreases the amount of free electrons, which we can see directly from \eqref{eq:diffusion-length}, increases the diffusion length, thus increasing damping. Similarly, increasing matter density increases the expansion rate at recombination, decreasing $H$ and thus increasing the diffusion length and consequently damping the diffusion tail.
+
+We enumerated the most defining features of the CMB power spectrum and what affects them the most, but it is also worth mentioning some other parameters that have more general effects on it:
+\begin{itemize}
+    \item The primordial amplitude $A_s$, which sets the amplitude of the initial perturbation and thus sets the amplitude of the whole spectrum.
+    \item The optical depth at reionization $\tau_\text{reion}$, which is highly degenerate with $A_s$, since it also affects the overall amplitude of the spectrum as $C_\ell \propto e^{-2\tau_\text{reion}}$, except for the largest scales (lowest $\ell$s), which correspond to the modes that only enter the horizon very close to today.
+    \item Curvature $\Omega_{k0}$, which, other than its main effect, which is shifting the peaks, will also affect the tilt of the Sachs-Wolfe plateau.
+    \item Dark energy density parameter $\Omega_{\Lambda0}$, which changes the distance to the surface of last scattering, as adding more dark energy means its repulsive force will cause the Universe to expand faster. As such, the position of the peaks will be slightly influenced, as well as the tilt on the Sachs-Wolfe plateau.
+    %\item The number of effective degrees of freedom $N_\text{eff}$, which, when increased, increases the expansion rate at recombination
+    \item The primordial helium abundance $Y_p$, which, when increased, decreased the number of free electrons, increasing the diffusion length and thus further damping the tail.
+\end{itemize}
+
+Next, we can look at the CMB polarization power spectrum, as well as the temperature-polarization cross-spectrum, compared to the temperature power spectrum in Figure \ref{fig:power-spectra}. Once again, we can see that our simulations agree with the observations, further supporting that our model and parameters are fairly well-chosen. However, in this figure it is more obvious that there seems to be a slight mismatch in the peak position, which, as we went over, might indicate that we should have used slightly different values for $\Omega_{K}$ or $\Omega_\Lambda$.
+
+\begin{figure}
+  \centering
+  \begin{tabular}{@{}c@{}}
+    \includegraphics[width=\linewidth]{report/figures/power_spectrum_TT_linear.png} \\[\abovecaptionskip]
+    \small (a)
+  \end{tabular}
+
+  \vspace{\floatsep}
+  \begin{tabular}{@{}c@{}}
+       \includegraphics[width=\linewidth]{report/figures/power_spectrum_EE.png} \\[\abovecaptionskip]
+    \small (b)
+  \end{tabular}
+
+
+  \vspace{\floatsep}
+
+  \begin{tabular}{@{}c@{}}
+    \includegraphics[width=\linewidth]{report/figures/power_spectrum_TE.png} \\[\abovecaptionskip]
+    \small (c)
+  \end{tabular}
+
+  \caption{CMB temperature (a) and E-mode polarization power spectra (b) and temperature-polarization cross spectrum (c). The theoretical curve is presented in blue and observations from \cite{2020} are presented in orange with their respective error bars. The power spectra are presented as $\frac{\ell(\ell+1)C_\ell^\text{TT}}{2\pi}$.}\label{fig:power-spectra}
+\end{figure}
+
+The leading contribution for the polarization power spectrum is that of the photon quadrupole, whereas for the temperature one it is the monopole. These two are out of phase, meaning, where the temperature power spectrum has peaks, the polarization one will have dips and vice-versa, which we can confirm from the figure. Perhaps more interestingly, we know that polarization is not only generated at last scattering, but also during reionization, which translates into a small "bump" at small $\ell$s in the E-mode polarization spectrum, whose amplitude is $\propto \tau_{\rm reion}^2$, and which is a brilliant way of breaking the $\tau_\text{reion}$ degeneracies with $A_s$.
+
+From this, we can simulate what the CMB anisotropies look like at a Universe with a random field as initial conditions, and this is shown in Figure \ref{fig:cmb-map}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{report/figures/cmb_map_TT.png}
+    \caption{Temperature CMB map.}
+    \label{fig:cmb-map}
+\end{figure}
+
+Even though we can see that some defining features that exist in the CMB in our Universe are not there (such as the cold spot), the map looks reasonable, with temperatures in the same order as \cite{2020}, and smaller hot and cold spots.
+
+Lastly, we can take a look at the matter power spectrum in Figure \ref{fig:ps-matter}.
+
+\begin{figure}[ht]
+    \centering
+    \includegraphics[width=\linewidth]{report/figures/matter_power_spectrum.png}
+    \caption{Matter power spectrum $P(k)$ over wavenumber $k$ (blue) in a log-log plot. The red dashed line marks the wavenumber determined by the scale factor at matter-radiation equality.}
+    \label{fig:ps-matter}
+\end{figure}
+
+The general shape of the curve, with a peak at $k_{eq}$ (the wavenumber determined by the scale factor at matter-radiation equality), is easily explained by looking at how modes of different scales evolve. Anything above $k_{eq}$ means that the mode was small enough to enter the horizon before matter-radiation equality. During the radiation era, modes that have not yet entered the horizon grow as $a^2$, whereas modes that enter the horizon at some point start growing only as $\log a$, meaning their growth is very damped. The smaller the scale, the earlier it enters the horizon and the more their growth is damped. As for anything below $k_\text{eq}$, the larger the scale (the smaller the $k$), the later the mode enters the horizon (already in the matter-dominated era) and thus the less it contributes.
+
+The oscillations we see at high $k$ are a consequence of baryonic acoustic oscillations. This happens because, once baryons and photons decouple, excess matter clusters around the places where the density was higher in the photon-baryon plasma.
+
 \section{Conclusions}
 
 \subsection{Background Cosmology}
@@ -638,11 +780,15 @@ We have simulated the Universe from the CMB until the present day. We present va
 
 \subsection{Recombination History}
 
-We have simulated the recombination and reionisation events, considering that the neutral atoms era is made up of only hydrogen and helium. For this, we calculated the electron fraction using the Saha and Peebles equations, which then gives us the optical depth which in turn gives us the visibility function. We find that decoupling happens around $x=-7$ and reionisation around $x=-2.2$. The fractional electron density $X_e$ at freeze-out is 0.00026736. The sound-horizon at decoupling $r_s$ is 144.84 Mpc.
+We have simulated the recombination and reionisation events, considering that the neutral atoms era is made up of hydrogen and helium. For this, we calculated the electron fraction using the Saha and Peebles equations, which then gives us the optical depth which in turn gives us the visibility function. We find that decoupling happens around $x=-7$. The fractional electron density $X_e$ at freeze-out is 0.00026736. The sound-horizon at decoupling $r_s$ is 144.84 Mpc.
 
 \subsection{Perturbations}
 
-We have perturbed our metric and propagated it through time in order to simulate how different quantities evolve over time, in particular the temperature, polarization and neutrino monopoles, dipoles and quadrupoles, as well s the CDM and baryon overdensities and perturbation velocities. We observe that, in general, modes start diverging from their initial condition depending on their scales, with smaller (larger) scales entering the horizon earlier (later). After this, the modes act as dampened oscillators due to the expansion of the Universe. Furthermore, we observe that CDM does not interact and that the start of oscillations for temperature multipoles equal to or higher than two and polarization multipoles are independent of their scale, as they are not prevalent at the time they would normally enter the horizon.
+We have perturbed our metric and propagated it through time in order to simulate how different quantities evolve over time, in particular the temperature, polarization and neutrino monopoles, dipoles and quadrupoles, as well as the CDM and baryon overdensities and perturbation velocities. We observe that, in general, modes start diverging from their initial condition depending on their scales, with smaller (larger) scales entering the horizon earlier (later). After this, the modes act as dampened oscillators due to the expansion of the Universe. Furthermore, we observe that CDM does not interact and that the start of oscillations for temperature multipoles equal to or higher than two and polarization multipoles are independent of their scale, as they are not prevalent at the time they would normally enter the horizon.
+
+\subsection{Power Spectrum}
+
+By making use of the line of sight integration technique, we were able to calculate the photon multiples up to $\ell\sim1000$ and, consequently, $C_\ell$, in order to simulate the CMB temperature and E-mode polarization power-spectra and its temperature-polarization cross spectrum and compare to observations from the Planck satellite, which agree to a high degree. We were also able to generate a CMB anisotropy temperature map. Lastly, we simulated the matter power-spectrum. 
 
 %\begin{acknowledgements}
 
