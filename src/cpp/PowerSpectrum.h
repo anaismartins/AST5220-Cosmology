@@ -35,7 +35,7 @@ private:
     //=====================================================================
 
     // Splines of bessel-functions for each value of ell in the array above
-    Spline2D j_ell_splines;
+    std::vector<Spline> j_ell_splines;
 
     // Generate splines of bessel-functions for each ell needed
     // to do the LOS integration

@@ -63,8 +63,8 @@ c = 2.99792458e8 * m / s
 
 ks = np.linspace(k_min, k_max, n_k)
 
-# magic_ells = [6, 100, 200, 500, 1000]
-magic_ells = [10, 100, 200, 500, 1000]
+magic_ells = [6, 100, 200, 500, 1000]
+# magic_ells = [10, 100, 200, 500, 1000]
 thetaT = np.zeros((len(magic_ells), len(ks)))
 
 plt.figure(figsize=(10, 6))
@@ -92,19 +92,19 @@ plt.figure(figsize=(10, 6))
 for elli in range(len(magic_ells)):
     plt.plot(
         # c * ks / H0,
-        # ks * eta0,
-        ks * Mpc / h,
+        ks * eta0,
+        # ks * Mpc / h,
         # thetaT[elli, :] ** 2 * H0 / (ks * c),
-        thetaT[elli, :] ** 2 / (ks) / Mpc * h,
+        thetaT[elli, :] * thetaT[elli, :] / (ks) / Mpc * h,
         label=f"$\ell$ = {magic_ells[elli]}",
     )
 # plt.xlabel(r"$k c / H_0$")
-# plt.xlabel(r"$k \eta_0$")
-plt.xlabel(r"$k$ (h/Mpc)")
+plt.xlabel(r"$k \eta_0$")
+# plt.xlabel(r"$k$ (h/Mpc)")
 # plt.ylabel(r"$\Theta_\ell^2 H_0/ (kc)$")
 plt.ylabel(r"$\Theta_\ell^2 / k$ (Mpc/h)")
-# plt.xlim(0, 600)
-# plt.ylim(1e10, 1e25)
+plt.xlim(0, 600)
+plt.ylim(0, 0.003)
 # plt.yscale("log")
 plt.legend()
 plt.savefig(
@@ -191,13 +191,14 @@ plt.errorbar(
     yerr=[planck_errdown, planck_errup],
     fmt="o",
     markersize=3,
-    label="Planck 2018",
+    label="Planck",
 )
 plt.xlabel(r"$\ell$")
 plt.ylabel(r"$\frac{\ell(\ell+1)C_\ell^{TT}}{2\pi}$ ($\mu K^2$)")
 plt.xscale("log")
-plt.ylim(-1000, 8000)
-plt.xlim(1, 3000)
+# plt.ylim(-1000, 8000)
+plt.xlim(1, 2000)
+plt.legend()
 plt.savefig(
     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/power_spectrum_TT.png",
     bbox_inches="tight",
@@ -208,7 +209,7 @@ plt.close()
 factor = np.zeros(len(planck_ells))
 for elli in range(len(planck_ells)):
     factor[elli] = ps.get_cell_TT(planck_ells[elli]) / planck_cell[elli]
-print(f"factor = {np.mean(factor)}")
+print(f"TT factor = {np.mean(factor)}")
 
 # plot polarization power spectrum
 plt.figure(figsize=(10, 6))
@@ -232,18 +233,24 @@ plt.errorbar(
     ],
     fmt="o",
     markersize=3,
-    label="Planck 2018",
+    label="Planck",
 )
 plt.xlabel(r"$\ell$")
 plt.ylabel(r"$\frac{\ell(\ell+1)C_\ell^{EE}}{2\pi}$ ($\mu K^2$)")
-plt.xlim(0, 2500)
-plt.ylim(-20, 120)
+plt.xlim(1, 2000)
+# plt.ylim(-20, 120)
 plt.legend()
 plt.savefig(
     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/power_spectrum_EE.png",
     bbox_inches="tight",
 )
 plt.close()
+
+# check factor between curve and points
+factor = np.zeros(len(planck_ells_EE))
+for elli in range(len(planck_ells_EE)):
+    factor[elli] = ps.get_cell_EE(planck_ells_EE[elli]) / planck_cell_EE[elli]
+print(f"EE factor = {np.mean(factor)}")
 
 # plot TE power spectrum
 cell_TE = np.zeros(len(ells))
@@ -260,18 +267,24 @@ plt.errorbar(
     yerr=[planck_errdown_TE, planck_errup_TE],
     fmt="o",
     markersize=3,
-    label="Planck 2018",
+    label="Planck",
 )
 plt.xlabel(r"$\ell$")
 plt.ylabel(r"$\frac{\ell(\ell+1)C_\ell^{TE}}{2\pi}$ ($\mu K^2$)")
-plt.xlim(-500, 3000)
-plt.ylim(-150, 150)
+# plt.xlim(-500, 3000)
+plt.xlim(1, 2000)
 plt.legend()
 plt.savefig(
     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/power_spectrum_TE.png",
     bbox_inches="tight",
 )
 plt.close()
+
+# check factor
+factor = np.zeros(len(planck_ells_TE))
+for elli in range(len(planck_ells_TE)):
+    factor[elli] = ps.get_cell_TE(planck_ells_TE[elli]) / planck_cell_TE[elli]
+print(f"TE factor = {np.mean(factor)}")
 
 # plot maps
 alms = hp.sphtfunc.synalm(
@@ -285,17 +298,6 @@ plt.savefig(
     bbox_inches="tight",
 )
 
-alms = hp.sphtfunc.synalm(
-    cls=cell_EE / ((ells * (ells + 1)) / (2.0 * np.pi)), lmax=2000
-)
-maps = hp.sphtfunc.alm2map(alms, nside=512, lmax=2000)
-cg.plot(maps, comp="cmb", min=-300, max=300, unit="uK")
-plt.tight_layout()
-plt.savefig(
-    "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/PowerSpectrum/cmb_map_EE.png",
-    bbox_inches="tight",
-)
-
-
+# print time
 t_end = time()
-print(f"Total time: {(t_end - t_start)/60} minutes")
+print(f"Time taken: {(t_end - t_start)/60:.2f} minutes")

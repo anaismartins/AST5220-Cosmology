@@ -80,48 +80,12 @@ plt.savefig(
 plt.clf()
 
 plt.plot(x, g_tilde / max(abs(g_tilde)), label=r"$\tilde{g}$")
-# plt.axvline(x=x_lss, linestyle="--", label="Last Scattering Surface", color="black")
-# plt.axvline(x=x_rec, linestyle="-.", label="Recombination", color="black")
-# plt.axvline(
-#     x=x_rec_saha, linestyle=":", label="Recombination according to Saha", color="black"
-# )
-# plt.xlabel(r"$x$")
-# plt.ylabel(r"$\tilde{g}$")
-# plt.legend()
-# plt.tight_layout()
-# plt.savefig(
-#     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/RecombinationHistory/g_tilde.pdf"
-# )
-# plt.show()
-# plt.clf()
-
 plt.plot(x, dgdx / max(abs(dgdx)), label=r"$\frac{d\tilde{g}}{dx}$")
-# plt.axvline(x=x_lss, linestyle="--", label="Last Scattering Surface", color="black")
-# plt.axvline(x=x_rec, linestyle="-.", label="Recombination", color="black")
-# plt.axvline(
-#     x=x_rec_saha, linestyle=":", label="Recombination according to Saha", color="black"
-# )
-# plt.xlabel(r"$x$")
-# plt.ylabel(r"$\frac{d\tilde{g}}{dx}$")
-# plt.legend()
-# plt.tight_layout()
-# plt.savefig(
-#     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/RecombinationHistory/dgdx.pdf"
-# )
-# # plt.show()
-# plt.clf()
-
 plt.plot(x, ddgddx / max(abs(ddgddx)), label=r"$\frac{d^2\tilde{g}}{dx^2}$")
 plt.xlabel(r"$x$")
-# plt.ylabel(r"$\frac{d^2\tilde{g}}{dx^2}$")
-# plt.axvline(x=x_rec, linestyle="-.", label="Recombination", color="black")
-# plt.axvline(x=x_reion, linestyle="--", label="Reionisation", color="black")
 plt.legend()
 plt.xlim(-8, -1.5)
 plt.tight_layout()
-# plt.savefig(
-#     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/RecombinationHistory/ddgddx.pdf"
-# )
 plt.savefig(
     "/mn/stornext/u3/aimartin/d5/cosmologyii/AST5220-Cosmology/output/plots/RecombinationHistory/gtilde.pdf"
 )

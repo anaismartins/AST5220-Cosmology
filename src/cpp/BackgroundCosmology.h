@@ -29,6 +29,7 @@ private:
   // Splines to be made
   Spline eta_of_x_spline{"eta"};
   Spline cosmic_time_spline{"cosmic time"};
+  Spline Hp_of_x_spline{"H(x)"};
 
 public:
   // Constructors
@@ -86,6 +87,7 @@ extern "C"
   double BackgroundCosmology_eta_of_x(BackgroundCosmology *bc, double x);
   double BackgroundCosmology_get_TCMB(BackgroundCosmology *bc, double x);
   double BackgroundCosmology_get_z(BackgroundCosmology *bc, double x);
+  double BackgroundCosmology_get_luminosity_distance_of_x(BackgroundCosmology *bc, double x);
 }
 
 #endif

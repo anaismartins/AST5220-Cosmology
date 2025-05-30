@@ -44,6 +44,12 @@ class BackgroundCosmology(object):
         lib.BackgroundCosmology_get_z.argtypes = [c_void_p, c_double]
         lib.BackgroundCosmology_get_z.restype = c_double
 
+        lib.BackgroundCosmology_get_luminosity_distance_of_x.argtypes = [
+            c_void_p,
+            c_double,
+        ]
+        lib.BackgroundCosmology_get_luminosity_distance_of_x.restype = c_double
+
         self.obj = lib.BackgroundCosmology_new(
             h, OmegaB0, OmegaCDM0, OmegaK0, Neff, TCMB
         )
@@ -74,3 +80,6 @@ class BackgroundCosmology(object):
 
     def get_z(self, x):
         return lib.BackgroundCosmology_get_z(self.obj, x)
+
+    def get_luminosity_distance_of_x(self, x):
+        return lib.BackgroundCosmology_get_luminosity_distance_of_x(self.obj, x)

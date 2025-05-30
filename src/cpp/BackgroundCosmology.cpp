@@ -80,6 +80,15 @@ void BackgroundCosmology::solve()
 
   cosmic_time_spline.create(x_array, t_array, "cosmic time");
 
+  // create the H(x) spline
+  Vector Hp_array;
+  Hp_array.reserve(npts);
+  for (const auto &x : x_array)
+  {
+    Hp_array.push_back(H_of_x(x));
+  }
+  Hp_of_x_spline.create(x_array, Hp_array, "Hp(x)");
+
   Utils::EndTiming("CosmicTime");
 }
 
@@ -126,7 +135,8 @@ double BackgroundCosmology::ddHpddx_of_x(double x) const
   double Hp = Hp_of_x(x);
   double dHpdx = dHpdx_of_x(x);
 
-  double ddHpddx = dHpdx * (1 - 1. / 4. * pow((a * H0) / Hp, 5) * pow((3 * OmegaM0 * pow(a, -3) + 4 * OmegaR0 * pow(a, -4) + 2 * OmegaK0 * pow(a, -2)), 2) * (9 * OmegaM0 * pow(a, -3) + 16 * OmegaR0 * pow(a, -4) + 4 * OmegaK0 * pow(a, -2)));
+  // double ddHpddx = dHpdx * (1. - 1. / 4. * pow((a * H0) / Hp, 5) * pow((3. * OmegaM0 * pow(a, -3) + 4. * OmegaR0 * pow(a, -4) + 2. * OmegaK0 * pow(a, -2)), 2) * (9. * OmegaM0 * pow(a, -3) + 16. * OmegaR0 * pow(a, -4) + 4. * OmegaK0 * pow(a, -2)));
+  double ddHpddx = H0 * H0 / (2 * Hp) * (-OmegaM0 * pow(a, -1) - 2 * OmegaR0 * pow(a, -2) + 2 * OmegaLambda0 * pow(a, 2)) - pow(H0, 4) / (4 * pow(Hp, 3)) * pow((OmegaM0 * pow(a, -1) + 4 * OmegaR0 * pow(a, -2) + 4 * OmegaLambda0 * pow(a, 2)), 2);
 
   return ddHpddx;
 }
@@ -288,7 +298,7 @@ void BackgroundCosmology::info() const
 //====================================================
 void BackgroundCosmology::output(const std::string filename) const
 {
-  const double x_min = -10.0;
+  const double x_min = -15.0;
   const double x_max = 0.0;
   const int n_pts = 100;
 
@@ -366,5 +376,10 @@ extern "C"
   double BackgroundCosmology_get_z(BackgroundCosmology *bc, double x)
   {
     return bc->get_z(x);
+  }
+
+  double BackgroundCosmology_get_luminosity_distance_of_x(BackgroundCosmology *bc, double x)
+  {
+    return bc->get_luminosity_distance_of_x(x);
   }
 }
